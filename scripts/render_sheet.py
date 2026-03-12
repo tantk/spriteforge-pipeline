@@ -79,7 +79,7 @@ SPRING_REACTION = 2.0
 SPRING_MAX_DEG = 45.0
 
 # NLA gap between strips
-NLA_GAP = 4
+NLA_GAP = 0
 
 
 # ============================================================================
@@ -342,6 +342,8 @@ def setup_render_settings():
     ls.select_material_boundary = False
     ls.select_suggestive_contour = False
     ls.select_ridge_valley = False
+    if ls.linestyle is None:
+        ls.linestyle = bpy.data.linestyles.new("LineStyle")
     ls.linestyle.color = (0, 0, 0)
     ls.linestyle.thickness = 1.0
 
@@ -352,10 +354,16 @@ def setup_render_settings():
 # Camera (ORTHO, direct bounding box method)
 # ============================================================================
 
-def setup_camera():
+def setup_camera(global_bounds=False):
     """
     Create orthographic camera and bake per-frame keyframes using direct
     bounding box method.
+
+    Args:
+        global_bounds: If True, use a single bounding box across all frames
+                       for consistent character size. Best for animations with
+                       large pose changes (e.g., standing to lying down).
+                       If False (default), bake per-frame for tighter framing.
 
     CRITICAL: Rotation must be (pi/2, 0, -pi/2). Using +pi/2 renders BLANK.
     """
@@ -376,40 +384,92 @@ def setup_camera():
     # CRITICAL rotation
     cam_obj.rotation_euler = CAM_ROTATION
 
-    # Bake per-frame keyframes
     t = time.time()
-    for f in range(_state['scene_start'], _state['scene_end'] + 1):
-        scene.frame_set(f)
-        depsgraph = bpy.context.evaluated_depsgraph_get()
 
-        min_y = float('inf')
-        max_y = float('-inf')
-        min_z = float('inf')
-        max_z = float('-inf')
+    if global_bounds:
+        # Hybrid: per-frame Y centering + fixed Z + fixed scale
+        # Ground stays in same place, character tracks horizontally only
+        g_min_z = float('inf')
+        g_max_z = float('-inf')
+        g_min_y = float('inf')
+        g_max_y = float('-inf')
+        frame_y_centers = {}
 
-        for mesh_obj in meshes:
-            eval_obj = mesh_obj.evaluated_get(depsgraph)
-            mesh_data = eval_obj.to_mesh()
-            for v in mesh_data.vertices:
-                world_co = eval_obj.matrix_world @ v.co
-                min_y = min(min_y, world_co.y)
-                max_y = max(max_y, world_co.y)
-                min_z = min(min_z, world_co.z)
-                max_z = max(max_z, world_co.z)
-            eval_obj.to_mesh_clear()
+        for f in range(_state['scene_start'], _state['scene_end'] + 1):
+            scene.frame_set(f)
+            depsgraph = bpy.context.evaluated_depsgraph_get()
 
-        center_y = (min_y + max_y) / 2
-        center_z = (min_z + max_z) / 2
-        ortho_scale = max(max_y - min_y, max_z - min_z) * CAM_PADDING
+            min_y = float('inf')
+            max_y = float('-inf')
+            min_z = float('inf')
+            max_z = float('-inf')
 
-        cam_obj.location = (CAM_DEPTH, center_y, center_z)
+            for mesh_obj in meshes:
+                eval_obj = mesh_obj.evaluated_get(depsgraph)
+                mesh_data = eval_obj.to_mesh()
+                for v in mesh_data.vertices:
+                    world_co = eval_obj.matrix_world @ v.co
+                    min_y = min(min_y, world_co.y)
+                    max_y = max(max_y, world_co.y)
+                    min_z = min(min_z, world_co.z)
+                    max_z = max(max_z, world_co.z)
+                eval_obj.to_mesh_clear()
+
+            frame_y_centers[f] = (min_y + max_y) / 2
+            g_min_z = min(g_min_z, min_z)
+            g_max_z = max(g_max_z, max_z)
+            g_min_y = min(g_min_y, min_y)
+            g_max_y = max(g_max_y, max_y)
+
+        center_z = (g_min_z + g_max_z) / 2
+        span_z = g_max_z - g_min_z
+        span_y = g_max_y - g_min_y
+        ortho_scale = max(span_y, span_z) * CAM_PADDING
         cam_obj.data.ortho_scale = ortho_scale
 
-        cam_obj.keyframe_insert(data_path='location', frame=f)
-        cam_obj.data.keyframe_insert(data_path='ortho_scale', frame=f)
+        # Bake per-frame Y position, fixed Z
+        for f, cy in frame_y_centers.items():
+            cam_obj.location = (CAM_DEPTH, cy, center_z)
+            cam_obj.keyframe_insert(data_path='location', frame=f)
 
-    elapsed = time.time() - t
-    print(f"Camera: ORTHO, {_state['scene_end']} frames baked in {elapsed:.1f}s")
+        elapsed = time.time() - t
+        print(f"Camera: ORTHO global (fixed Z + per-frame Y), {_state['scene_end']} frames in {elapsed:.1f}s")
+        print(f"  ortho_scale={ortho_scale:.3f}, center_z={center_z:.3f}")
+    else:
+        # Bake per-frame keyframes
+        for f in range(_state['scene_start'], _state['scene_end'] + 1):
+            scene.frame_set(f)
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+
+            min_y = float('inf')
+            max_y = float('-inf')
+            min_z = float('inf')
+            max_z = float('-inf')
+
+            for mesh_obj in meshes:
+                eval_obj = mesh_obj.evaluated_get(depsgraph)
+                mesh_data = eval_obj.to_mesh()
+                for v in mesh_data.vertices:
+                    world_co = eval_obj.matrix_world @ v.co
+                    min_y = min(min_y, world_co.y)
+                    max_y = max(max_y, world_co.y)
+                    min_z = min(min_z, world_co.z)
+                    max_z = max(max_z, world_co.z)
+                eval_obj.to_mesh_clear()
+
+            center_y = (min_y + max_y) / 2
+            center_z = (min_z + max_z) / 2
+            ortho_scale = max(max_y - min_y, max_z - min_z) * CAM_PADDING
+
+            cam_obj.location = (CAM_DEPTH, center_y, center_z)
+            cam_obj.data.ortho_scale = ortho_scale
+
+            cam_obj.keyframe_insert(data_path='location', frame=f)
+            cam_obj.data.keyframe_insert(data_path='ortho_scale', frame=f)
+
+        elapsed = time.time() - t
+        print(f"Camera: ORTHO per-frame, {_state['scene_end']} frames baked in {elapsed:.1f}s")
+
     print(f"  Depth={CAM_DEPTH}, Padding={CAM_PADDING}")
 
 
@@ -936,7 +996,7 @@ def run_full_pipeline(config_path):
     setup_scene(config)
     setup_lighting()
     setup_render_settings()
-    setup_camera()
+    setup_camera(global_bounds=config.get('global_camera', False))
     run_spring_bones()
     frames, expr_map = select_frames(config)
 

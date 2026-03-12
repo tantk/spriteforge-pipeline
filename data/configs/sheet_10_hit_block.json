@@ -1,0 +1,64 @@
+{
+    "name": "Hit & Block",
+    "sheet_index": 10,
+    "prompt": "A 4x4 sprite sheet of a character being hit and blocking attacks. Row 1: head hit reaction with surprised expression during impact. Row 2: medium hit to the head with surprised expression during impact. Row 3: stomach hit reaction with surprised expression during impact. Row 4: blocking stance with arms raised to deflect.",
+    "animations": [
+        {
+            "name": "Head Hit",
+            "fbx": "Head Hit.fbx",
+            "frames": 4,
+            "reversed": false,
+            "description": "Head hit reaction",
+            "segments": [
+                {"action_frames": [1, 4], "pick": 1},
+                {"action_frames": [5, 7], "pick": 1, "expression": "surprised"},
+                {"action_frames": [8, 9], "pick": 1, "expression": "surprised"},
+                {"action_frames": [10, 14], "pick": 1}
+            ]
+        },
+        {
+            "name": "Medium Hit To Head",
+            "fbx": "Medium Hit To Head.fbx",
+            "frames": 4,
+            "reversed": false,
+            "description": "Medium hit to head reaction",
+            "segments": [
+                {"action_frames": [0, 4], "pick": 1},
+                {"action_frames": [5, 8], "pick": 1, "expression": "surprised"},
+                {"action_frames": [9, 11], "pick": 1, "expression": "surprised"},
+                {"action_frames": [12, 15], "pick": 1}
+            ]
+        },
+        {
+            "name": "Stomach Hit",
+            "fbx": "Stomach Hit.fbx",
+            "frames": 4,
+            "reversed": false,
+            "description": "Stomach hit reaction",
+            "segments": [
+                {"action_frames": [0, 6], "pick": 1},
+                {"action_frames": [7, 9], "pick": 1, "expression": "surprised"},
+                {"action_frames": [11, 14], "pick": 1, "expression": "surprised"},
+                {"action_frames": [15, 18], "pick": 1}
+            ]
+        },
+        {
+            "name": "Block",
+            "fbx": "Block.fbx",
+            "frames": 4,
+            "reversed": false,
+            "description": "Blocking stance",
+            "segments": [
+                {"action_frames": [38, 40], "pick": 1},
+                {"action_frames": [41, 43], "pick": 1},
+                {"action_frames": [44, 46], "pick": 1},
+                {"action_frames": [47, 50], "pick": 1}
+            ]
+        }
+    ],
+    "selected_frames": [2, 6, 8, 12, 29, 34, 37, 40, 59, 64, 68, 72, 127, 130, 133, 136],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

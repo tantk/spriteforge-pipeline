@@ -1,0 +1,12 @@
+[
+    {
+        "image": "1.jpg",
+        "prompt": "Make the dog turn its head around.",
+        "kontext_images": "2.jpg"
+    },
+    {
+        "image": "3.jpg",
+        "prompt": "Let the dog jump.",
+        "kontext_images": "4.jpg"
+    }
+]

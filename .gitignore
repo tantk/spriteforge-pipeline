@@ -5,7 +5,6 @@
 node_modules/
 
 # Large binary assets (not suitable for git)
-archive/
 *.blend
 *.blend1
 data/animations/
@@ -15,7 +14,10 @@ data/scenes/
 # Render frames (individual PNGs in subdirs) — sprite sheets and GIFs are kept
 data/renders/sheet_*/
 
-# Test/debug renders
+# Test output (test renders, debug images)
+tests/output/
+
+# Test/debug renders (legacy location)
 data/renders/test_*.png
 data/renders/compare_*.png
 data/renders/expression_*.png

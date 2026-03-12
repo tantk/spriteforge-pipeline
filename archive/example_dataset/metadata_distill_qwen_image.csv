@@ -1,0 +1,2 @@
+image,prompt,seed,rand_device,num_inference_steps,cfg_scale
+distill_qwen/image.jpg,"精致肖像，水下少女，蓝裙飘逸，发丝轻扬，光影透澈，气泡环绕，面容恬静，细节精致，梦幻唯美。",0,cpu,4,1

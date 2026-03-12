@@ -531,32 +531,38 @@ For animations where the character travels far (rolls, flips, falls):
 
 ```
 loracomp3/
-├── PROJECT.md                              # This file
-├── QwenImageLoRA_Competition.md            # Competition rules
-├── blender_sprite_pipeline_addon.py        # Blender addon (v3.0)
-├── .env                                    # ModelScope token
+├── CLAUDE.md                              # Project rules for Claude Code
+├── PROJECT.md                             # This file
+├── blender_sprite_pipeline_addon.py       # Blender addon (v3.0)
+├── blender_mcp_addon.py                   # Blender MCP addon
+├── .env                                   # ModelScope token
 │
-├── scripts/
-│   ├── vrm_to_mixamo_fbx.py               # VRM → FBX converter
-│   ├── test_spring_bones.py                # Spring bone hair physics
-│   ├── test_render_animation.py            # Single frame render
-│   ├── render_animation_gif.py             # Render animation → GIF
-│   ├── check_animation_range.py            # Debug FBX keyframe ranges
-│   └── test_angles.py                      # Debug camera angles
+├── scripts/                               # Production pipeline scripts only
+│   ├── vrm_to_mixamo_fbx.py              # VRM → FBX converter
+│   ├── test_spring_bones.py              # Spring bone hair physics
+│   ├── build_training_pairs.py           # Build training pairs
+│   ├── package_dataset.py                # Package dataset for upload
+│   └── check_animation_range.py          # Check FBX keyframe ranges
+│
+├── tests/                                 # Test & debug scripts
+│   ├── output/                            # Test renders go here (gitignored)
+│   ├── test_angles.py                     # Camera angle tests
+│   ├── test_hair_physics.py              # Hair physics tests
+│   ├── test_render_animation.py          # Single frame render test
+│   ├── render_animation_gif.py           # Render animation → GIF
+│   ├── vrm_debug_bones.py               # VRM bone inspection
+│   ├── vrm_debug_materials.py           # VRM material inspection
+│   └── vrm_debug_textures.py            # VRM texture inspection
 │
 ├── data/
-│   ├── manifest.json                       # Master manifest (all sheets, characters, status)
-│   ├── animations/                         # 45 Mixamo FBX files
-│   ├── characters/                         # Character source files
-│   │   └── AvatarSample_B/
-│   │       ├── model.vroid
-│   │       ├── AvatarSample_B.vrm
-│   │       └── AvatarSample_B.fbx
-│   ├── configs/                            # Sprite sheet configs (JSON per sheet)
-│   ├── scenes/                             # Blender scene files (.blend per sheet)
-│   └── renders/                            # Output (sprite sheets, GIFs, frame subdirs)
+│   ├── manifest.json                      # Master manifest (all sheets, characters, status)
+│   ├── animations/                        # 45 Mixamo FBX files
+│   ├── characters/                        # Character source files
+│   ├── configs/                           # Sprite sheet configs (JSON per sheet)
+│   ├── scenes/                            # Blender scene files (.blend per sheet)
+│   └── renders/                           # Final sprite sheets + GIFs only
 │
-└── archive/                                # Old test files, deprecated experiments
+└── archive/                               # Deprecated scripts & data (gitignored)
 ```
 
 ---

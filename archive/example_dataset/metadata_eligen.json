@@ -1,0 +1,18 @@
+[
+    {
+        "image": "eligen/image.png",
+        "prompt": "A beautiful girl wearing shirt and shorts in the street,  holding a sign 'Entity Control'",
+        "eligen_entity_prompts": [
+            "A beautiful girl",
+            "sign 'Entity Control'",
+            "shorts",
+            "shirt"
+        ],
+        "eligen_entity_masks":[
+            "eligen/0.png",
+            "eligen/1.png",
+            "eligen/2.png",
+            "eligen/3.png"
+        ]
+    }
+]

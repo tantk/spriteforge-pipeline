@@ -1,0 +1,10 @@
+[
+    {
+        "image": "edit/image2.jpg",
+        "prompt": "Change the color of the dress in Figure 1 to the color shown in Figure 2.",
+        "edit_image": [
+            "edit/image1.jpg",
+            "edit/image_color.jpg"
+        ]
+    }
+]

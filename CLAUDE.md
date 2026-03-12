@@ -27,3 +27,4 @@
 - The Blender addon (`blender_mcp_addon.py`) rejects second connections to the same instance
 - **Blender side**: each instance must have a unique port set in N-panel > BlenderMCP, with "Connect to MCP server" clicked
 - **No manual config needed per worktree** — just restart the session and it auto-connects
+- **Check your port**: `cat .blender_port` to see which Blender instance you're connected to

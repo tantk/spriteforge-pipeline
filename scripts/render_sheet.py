@@ -498,6 +498,9 @@ def run_spring_bones(stiffness=SPRING_STIFFNESS, damping=SPRING_DAMPING,
     Run spring bone hair physics simulation and push to NLA.
     VRoid characters only (skips if no J_Sec_Hair* bones found).
 
+    Resets spring bone state at each animation boundary so hair physics
+    from one animation don't carry over into the next.
+
     Must run AFTER setup_camera() — frustum clamp depends on camera position.
     """
     arm = _state['armature']
@@ -508,65 +511,71 @@ def run_spring_bones(stiffness=SPRING_STIFFNESS, damping=SPRING_DAMPING,
         print("Spring bones: No hair chains found (Mixamo character?). Skipping.")
         return
 
-    print(f"Spring bones: {len(chains)} hair chains, {end_frame} frames")
+    # Get animation boundaries from NLA strips
+    anim_ranges = []
+    for track in arm.animation_data.nla_tracks:
+        if track.name == 'SpringBoneHair':
+            continue
+        for strip in track.strips:
+            anim_ranges.append((track.name, int(strip.frame_start), int(strip.frame_end)))
+    anim_ranges.sort(key=lambda x: x[1])
+
+    print(f"Spring bones: {len(chains)} hair chains, {len(anim_ranges)} animations")
 
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode='POSE')
 
-    # Record head rotations
-    head_quats = []
-    for frame in range(1, end_frame + 1):
-        bpy.context.scene.frame_set(frame)
-        head_pbone = arm.pose.bones.get('J_Bip_C_Head')
-        if head_pbone is None:
-            print("  Warning: J_Bip_C_Head not found. Skipping spring bones.")
-            bpy.ops.object.mode_set(mode='OBJECT')
-            return
-        world_mat = arm.matrix_world @ head_pbone.matrix
-        head_quats.append(world_mat.to_quaternion())
-
-    # Init state
-    state = {}
-    for chain in chains:
-        for bone_name in chain:
-            state[bone_name] = {'ox': 0.0, 'oz': 0.0, 'vx': 0.0, 'vz': 0.0}
+    head_pbone = arm.pose.bones.get('J_Bip_C_Head')
+    if head_pbone is None:
+        print("  Warning: J_Bip_C_Head not found. Skipping spring bones.")
+        bpy.ops.object.mode_set(mode='OBJECT')
+        return
 
     max_rad = math.radians(max_deg)
-    prev_quat = head_quats[0]
     t = time.time()
 
-    for fi in range(len(head_quats)):
-        frame = fi + 1
-        bpy.context.scene.frame_set(frame)
-
-        cur_quat = head_quats[fi]
-        delta = prev_quat.inverted() @ cur_quat
-        delta_euler = delta.to_euler()
-        prev_quat = cur_quat
-
+    for anim_name, anim_start, anim_end in anim_ranges:
+        # Reset state at each animation boundary
+        state = {}
         for chain in chains:
-            for ci, bone_name in enumerate(chain):
-                pbone = arm.pose.bones[bone_name]
-                s = state[bone_name]
-                cf = (ci + 1) / len(chain)
+            for bone_name in chain:
+                state[bone_name] = {'ox': 0.0, 'oz': 0.0, 'vx': 0.0, 'vz': 0.0}
 
-                fx = -delta_euler.x * reaction * cf
-                fz = -delta_euler.z * reaction * cf
-                fx += -s['ox'] * stiffness
-                fz += -s['oz'] * stiffness
+        bpy.context.scene.frame_set(anim_start)
+        prev_quat = (arm.matrix_world @ head_pbone.matrix).to_quaternion()
 
-                s['vx'] = s['vx'] * (1.0 - damping) + fx
-                s['vz'] = s['vz'] * (1.0 - damping) + fz
-                s['ox'] += s['vx']
-                s['oz'] += s['vz']
+        for frame in range(anim_start, anim_end + 1):
+            bpy.context.scene.frame_set(frame)
+            cur_quat = (arm.matrix_world @ head_pbone.matrix).to_quaternion()
+            delta = prev_quat.inverted() @ cur_quat
+            delta_euler = delta.to_euler()
+            prev_quat = cur_quat
 
-                limit = max_rad * cf
-                s['ox'] = max(-limit, min(limit, s['ox']))
-                s['oz'] = max(-limit, min(limit, s['oz']))
+            for chain in chains:
+                for ci, bone_name in enumerate(chain):
+                    pbone = arm.pose.bones[bone_name]
+                    s = state[bone_name]
+                    cf = (ci + 1) / len(chain)
 
-                pbone.rotation_mode = 'XYZ'
-                pbone.rotation_euler = (s['ox'], 0.0, s['oz'])
-                pbone.keyframe_insert(data_path='rotation_euler', frame=frame)
+                    fx = -delta_euler.x * reaction * cf
+                    fz = -delta_euler.z * reaction * cf
+                    fx += -s['ox'] * stiffness
+                    fz += -s['oz'] * stiffness
+
+                    s['vx'] = s['vx'] * (1.0 - damping) + fx
+                    s['vz'] = s['vz'] * (1.0 - damping) + fz
+                    s['ox'] += s['vx']
+                    s['oz'] += s['vz']
+
+                    limit = max_rad * cf
+                    s['ox'] = max(-limit, min(limit, s['ox']))
+                    s['oz'] = max(-limit, min(limit, s['oz']))
+
+                    pbone.rotation_mode = 'XYZ'
+                    pbone.rotation_euler = (s['ox'], 0.0, s['oz'])
+                    pbone.keyframe_insert(data_path='rotation_euler', frame=frame)
+
+        print(f"  {anim_name}: {anim_start}-{anim_end} (reset)")
 
     bpy.ops.object.mode_set(mode='OBJECT')
     sim_time = time.time() - t

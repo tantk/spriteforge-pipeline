@@ -531,51 +531,67 @@ def run_spring_bones(stiffness=SPRING_STIFFNESS, damping=SPRING_DAMPING,
         bpy.ops.object.mode_set(mode='OBJECT')
         return
 
+    # Step 1: Pre-record head quaternions (clean pass, no keyframe insertion)
+    head_quats = {}
+    for frame in range(1, end_frame + 1):
+        bpy.context.scene.frame_set(frame)
+        world_mat = arm.matrix_world @ head_pbone.matrix
+        head_quats[frame] = world_mat.to_quaternion()
+
+    # Step 2: Build set of animation start frames for state reset
+    reset_frames = {anim_start for _, anim_start, _ in anim_ranges}
+
+    # Step 3: Simulate with per-animation state reset
     max_rad = math.radians(max_deg)
     t = time.time()
 
-    for anim_name, anim_start, anim_end in anim_ranges:
-        # Reset state at each animation boundary
-        state = {}
-        for chain in chains:
-            for bone_name in chain:
-                state[bone_name] = {'ox': 0.0, 'oz': 0.0, 'vx': 0.0, 'vz': 0.0}
+    state = {}
+    for chain in chains:
+        for bone_name in chain:
+            state[bone_name] = {'ox': 0.0, 'oz': 0.0, 'vx': 0.0, 'vz': 0.0}
 
-        bpy.context.scene.frame_set(anim_start)
-        prev_quat = (arm.matrix_world @ head_pbone.matrix).to_quaternion()
+    prev_quat = head_quats[1]
 
-        for frame in range(anim_start, anim_end + 1):
-            bpy.context.scene.frame_set(frame)
-            cur_quat = (arm.matrix_world @ head_pbone.matrix).to_quaternion()
-            delta = prev_quat.inverted() @ cur_quat
-            delta_euler = delta.to_euler()
-            prev_quat = cur_quat
-
+    for frame in range(1, end_frame + 1):
+        # Reset state at animation boundaries
+        if frame in reset_frames:
             for chain in chains:
-                for ci, bone_name in enumerate(chain):
-                    pbone = arm.pose.bones[bone_name]
-                    s = state[bone_name]
-                    cf = (ci + 1) / len(chain)
+                for bone_name in chain:
+                    state[bone_name] = {'ox': 0.0, 'oz': 0.0, 'vx': 0.0, 'vz': 0.0}
+            prev_quat = head_quats[frame]
 
-                    fx = -delta_euler.x * reaction * cf
-                    fz = -delta_euler.z * reaction * cf
-                    fx += -s['ox'] * stiffness
-                    fz += -s['oz'] * stiffness
+        bpy.context.scene.frame_set(frame)
 
-                    s['vx'] = s['vx'] * (1.0 - damping) + fx
-                    s['vz'] = s['vz'] * (1.0 - damping) + fz
-                    s['ox'] += s['vx']
-                    s['oz'] += s['vz']
+        cur_quat = head_quats[frame]
+        delta = prev_quat.inverted() @ cur_quat
+        delta_euler = delta.to_euler()
+        prev_quat = cur_quat
 
-                    limit = max_rad * cf
-                    s['ox'] = max(-limit, min(limit, s['ox']))
-                    s['oz'] = max(-limit, min(limit, s['oz']))
+        for chain in chains:
+            for ci, bone_name in enumerate(chain):
+                pbone = arm.pose.bones[bone_name]
+                s = state[bone_name]
+                cf = (ci + 1) / len(chain)
 
-                    pbone.rotation_mode = 'XYZ'
-                    pbone.rotation_euler = (s['ox'], 0.0, s['oz'])
-                    pbone.keyframe_insert(data_path='rotation_euler', frame=frame)
+                fx = -delta_euler.x * reaction * cf
+                fz = -delta_euler.z * reaction * cf
+                fx += -s['ox'] * stiffness
+                fz += -s['oz'] * stiffness
 
-        print(f"  {anim_name}: {anim_start}-{anim_end} (reset)")
+                s['vx'] = s['vx'] * (1.0 - damping) + fx
+                s['vz'] = s['vz'] * (1.0 - damping) + fz
+                s['ox'] += s['vx']
+                s['oz'] += s['vz']
+
+                limit = max_rad * cf
+                s['ox'] = max(-limit, min(limit, s['ox']))
+                s['oz'] = max(-limit, min(limit, s['oz']))
+
+                pbone.rotation_mode = 'XYZ'
+                pbone.rotation_euler = (s['ox'], 0.0, s['oz'])
+                pbone.keyframe_insert(data_path='rotation_euler', frame=frame)
+
+    print(f"  Reset at frames: {sorted(reset_frames)}")
 
     bpy.ops.object.mode_set(mode='OBJECT')
     sim_time = time.time() - t

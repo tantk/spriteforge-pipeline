@@ -1,9 +1,10 @@
 """
 Sprite Sheet Render Pipeline (Per-Animation)
 =============================================
-Renders each animation independently starting at frame 1.
+Imports all animations into sequential NLA on one armature, then renders
+each animation independently by muting others and shifting to frame 1.
 Spring bones get fresh state per animation -- no carry-over.
-Action frames in config map directly to scene frames (no NLA offset).
+Action frames in config map directly to scene frames (strip at frame 1).
 
 Usage via Blender CLI:
     blender --background --python scripts/render_sheet_indv.py -- data/configs/sheet_XX.json
@@ -11,8 +12,12 @@ Usage via Blender CLI:
 Usage via Blender MCP (step by step):
     exec(open(r"C:\dev\loracomp3\scripts\render_sheet_indv.py").read())
     load_config(r"C:\dev\loracomp3\data\configs\sheet_10_hit_block.json")
-    render_animation(0)   # Import + camera + spring bones + render
-    render_animation(1)   # Clears prev, imports new, renders
+    # If scene already has the NLA setup (e.g., loaded from .blend):
+    init_from_scene()
+    # If starting fresh (kills MCP connection!):
+    # setup_scene()
+    render_animation(0)   # Mute others, shift to frame 1, render
+    render_animation(1)
     render_animation(2)
     render_animation(3)
     assemble_sheet()
@@ -48,6 +53,8 @@ _state = {
     'sheet_path': None,
     'gif_path': None,
     'scene_path': None,
+    # Original NLA strip positions (saved before shifting)
+    'strip_positions': {},
 }
 
 # Paths
@@ -98,28 +105,183 @@ def load_config(config_path):
 
 
 # ============================================================================
-# Scene helpers
+# Scene setup (imports all FBXes into sequential NLA)
 # ============================================================================
 
-def _ensure_scene():
-    """Ensure lighting and render settings exist. MCP-safe (no factory reset)."""
-    # Check if lighting already exists
-    has_lights = any(obj.type == 'LIGHT' for obj in bpy.data.objects)
-    if not has_lights:
-        _setup_lighting()
-    # Always ensure render settings
+def setup_scene(config=None):
+    """
+    Import all FBX files into sequential NLA on one armature.
+    WARNING: Calls read_factory_settings — kills MCP connection.
+    For MCP, use init_from_scene() with an existing .blend instead.
+    """
+    if config is None:
+        config = _state['config']
+    if config is None:
+        raise ValueError("No config loaded. Call load_config() first.")
+
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+
+    animations = config['animations']
+    scene = bpy.context.scene
+    armature = None
+    current_frame = 1
+
+    for ai, anim in enumerate(animations):
+        fbx_path = os.path.join(ANIMATIONS_DIR, anim['fbx'])
+        if not os.path.exists(fbx_path):
+            raise FileNotFoundError(f"Animation FBX not found: {fbx_path}")
+
+        print(f"\nImporting {anim['name']} from {anim['fbx']}...")
+        bpy.ops.import_scene.fbx(filepath=fbx_path)
+
+        for obj in list(bpy.data.objects):
+            if obj.type == 'EMPTY':
+                bpy.data.objects.remove(obj, do_unlink=True)
+
+        if ai == 0:
+            for obj in bpy.data.objects:
+                if obj.type == 'ARMATURE':
+                    armature = obj
+                    break
+            if armature is None:
+                raise RuntimeError("No armature found after FBX import")
+
+            action = armature.animation_data.action
+            action.name = anim['name']
+            action_end = int(action.frame_range[1])
+
+            for slot in action.slots:
+                slot.identifier = "OB" + armature.name
+
+            track = armature.animation_data.nla_tracks.new()
+            track.name = anim['name']
+            strip = track.strips.new(anim['name'], current_frame, action)
+            strip.frame_start = current_frame
+            strip.frame_end = current_frame + action_end - 1
+            strip.extrapolation = 'NOTHING'
+            if anim.get('reversed', False):
+                strip.use_reverse = True
+
+            print(f"  NLA: {anim['name']} frames {strip.frame_start}-{strip.frame_end}")
+            current_frame = int(strip.frame_end) + 1
+            armature.animation_data.action = None
+        else:
+            new_arm = None
+            for obj in bpy.data.objects:
+                if obj.type == 'ARMATURE' and obj != armature:
+                    new_arm = obj
+                    break
+
+            if new_arm and new_arm.animation_data and new_arm.animation_data.action:
+                action = new_arm.animation_data.action
+                action.name = anim['name']
+                action_end = int(action.frame_range[1])
+
+                for slot in action.slots:
+                    slot.identifier = "OB" + armature.name
+
+                if armature.animation_data is None:
+                    armature.animation_data_create()
+                track = armature.animation_data.nla_tracks.new()
+                track.name = anim['name']
+                strip = track.strips.new(anim['name'], current_frame, action)
+                strip.frame_start = current_frame
+                strip.frame_end = current_frame + action_end - 1
+                strip.extrapolation = 'NOTHING'
+                if anim.get('reversed', False):
+                    strip.use_reverse = True
+
+                print(f"  NLA: {anim['name']} frames {strip.frame_start}-{strip.frame_end}")
+                current_frame = int(strip.frame_end) + 1
+
+            for obj in list(bpy.data.objects):
+                if obj.type == 'ARMATURE' and obj != armature:
+                    bpy.data.objects.remove(obj, do_unlink=True)
+            for obj in list(bpy.data.objects):
+                if obj.type == 'MESH' and obj.name.endswith('.001'):
+                    bpy.data.objects.remove(obj, do_unlink=True)
+
+    if armature.animation_data:
+        armature.animation_data.action = None
+
+    _state['armature'] = armature
+    _state['meshes'] = [c for c in armature.children if c.type == 'MESH']
+
+    for obj in _state['meshes']:
+        if obj.data.shape_keys:
+            keys = [k.name for k in obj.data.shape_keys.key_blocks]
+            if 'Fcl_ALL_Surprised' in keys:
+                _state['face_obj'] = obj
+                break
+
+    # Save original strip positions
+    _save_strip_positions()
+
+    # Setup lighting and render
+    _setup_lighting()
     _setup_render_settings()
 
+    print(f"\n--- NLA Summary ---")
+    for track in armature.animation_data.nla_tracks:
+        for strip in track.strips:
+            print(f"  {track.name}: frames {strip.frame_start}-{strip.frame_end}")
+    print(f"Face mesh: {_state['face_obj'].name if _state['face_obj'] else 'None'}")
 
-def _clear_character():
-    """Remove existing character (armature, meshes, empties, camera) from scene."""
-    for obj in list(bpy.data.objects):
-        if obj.type in ('ARMATURE', 'MESH', 'EMPTY', 'CAMERA'):
-            bpy.data.objects.remove(obj, do_unlink=True)
-    _state['armature'] = None
-    _state['meshes'] = []
+    return armature
+
+
+def init_from_scene():
+    """
+    Initialize _state from an existing Blender scene (MCP-safe).
+    Use this when loading from a .blend file instead of setup_scene().
+    """
+    arm = None
+    for obj in bpy.data.objects:
+        if obj.type == 'ARMATURE':
+            arm = obj
+            break
+    if arm is None:
+        raise RuntimeError("No armature found in scene")
+
+    _state['armature'] = arm
+    _state['meshes'] = [c for c in arm.children if c.type == 'MESH']
     _state['face_obj'] = None
 
+    for obj in _state['meshes']:
+        if obj.data.shape_keys:
+            keys = [k.name for k in obj.data.shape_keys.key_blocks]
+            if 'Fcl_ALL_Surprised' in keys:
+                _state['face_obj'] = obj
+                break
+
+    _save_strip_positions()
+
+    print(f"Initialized from scene: armature={arm.name}")
+    print(f"  Meshes: {[m.name for m in _state['meshes']]}")
+    print(f"  Face: {_state['face_obj'].name if _state['face_obj'] else 'None'}")
+    for track in arm.animation_data.nla_tracks:
+        if track.name == 'SpringBoneHair':
+            continue
+        for strip in track.strips:
+            print(f"  NLA: {track.name} frames {strip.frame_start}-{strip.frame_end}")
+
+
+def _save_strip_positions():
+    """Save original NLA strip positions for restore after shifting."""
+    arm = _state['armature']
+    _state['strip_positions'] = {}
+    for track in arm.animation_data.nla_tracks:
+        if track.name == 'SpringBoneHair':
+            continue
+        for strip in track.strips:
+            _state['strip_positions'][track.name] = (
+                strip.frame_start, strip.frame_end
+            )
+
+
+# ============================================================================
+# Lighting & render settings
+# ============================================================================
 
 def _setup_lighting():
     """Set up 3-sun lighting (no shadows)."""
@@ -134,7 +296,16 @@ def _setup_lighting():
         obj = bpy.data.objects.new(f"Sun_{name}", light)
         bpy.context.scene.collection.objects.link(obj)
         obj.rotation_euler = tuple(math.radians(a) for a in rot)
-    print("Lighting: 3 suns, no shadows")
+
+    for mat in bpy.data.materials:
+        if not mat.node_tree:
+            continue
+        for node in mat.node_tree.nodes:
+            if node.type == 'BSDF_PRINCIPLED':
+                node.inputs['Specular IOR Level'].default_value = 0.0
+                node.inputs['Roughness'].default_value = 1.0
+
+    print("Lighting: 3 suns, no shadows, specular killed")
 
 
 def _setup_render_settings():
@@ -179,71 +350,7 @@ def _setup_render_settings():
     ls.linestyle.color = (0, 0, 0)
     ls.linestyle.thickness = 1.0
 
-
-# ============================================================================
-# Import single animation
-# ============================================================================
-
-def _import_animation(fbx_path, reversed=False):
-    """Import one FBX. Push action to NLA at frame 1. Return action_end."""
-    bpy.ops.import_scene.fbx(filepath=fbx_path)
-
-    # Delete ALL empties (Freestyle crash prevention)
-    for obj in list(bpy.data.objects):
-        if obj.type == 'EMPTY':
-            bpy.data.objects.remove(obj, do_unlink=True)
-
-    # Find armature
-    armature = None
-    for obj in bpy.data.objects:
-        if obj.type == 'ARMATURE':
-            armature = obj
-            break
-    if armature is None:
-        raise RuntimeError("No armature found after FBX import")
-
-    action = armature.animation_data.action
-    action_end = int(action.frame_range[1])
-
-    # Fix slot identifier (Blender 5.0)
-    for slot in action.slots:
-        slot.identifier = "OB" + armature.name
-
-    # Push to NLA at frame 1
-    track = armature.animation_data.nla_tracks.new()
-    track.name = action.name
-    strip = track.strips.new(action.name, 1, action)
-    strip.frame_start = 1
-    strip.frame_end = action_end
-    strip.extrapolation = 'NOTHING'
-    if reversed:
-        strip.use_reverse = True
-    armature.animation_data.action = None
-
-    # Find meshes and face
-    meshes = [c for c in armature.children if c.type == 'MESH']
-    face_obj = None
-    for obj in meshes:
-        if obj.data.shape_keys:
-            keys = [k.name for k in obj.data.shape_keys.key_blocks]
-            if 'Fcl_ALL_Surprised' in keys:
-                face_obj = obj
-                break
-
-    # Kill specular on all materials
-    for mat in bpy.data.materials:
-        if not mat.node_tree:
-            continue
-        for node in mat.node_tree.nodes:
-            if node.type == 'BSDF_PRINCIPLED':
-                node.inputs['Specular IOR Level'].default_value = 0.0
-                node.inputs['Roughness'].default_value = 1.0
-
-    _state['armature'] = armature
-    _state['meshes'] = meshes
-    _state['face_obj'] = face_obj
-
-    return action_end
+    print("Render: EEVEE 256x256, Standard, white BG, Freestyle 1px")
 
 
 # ============================================================================
@@ -254,6 +361,11 @@ def _setup_camera(end_frame, global_bounds=False):
     """Create orthographic camera with per-frame bounding box keyframes."""
     scene = bpy.context.scene
     meshes = _state['meshes']
+
+    # Delete old camera
+    for obj in list(bpy.data.objects):
+        if obj.type == 'CAMERA':
+            bpy.data.objects.remove(obj, do_unlink=True)
 
     cam_data = bpy.data.cameras.new("Camera")
     cam_data.type = 'ORTHO'
@@ -342,6 +454,16 @@ def _find_hair_chains(arm_obj):
     return chains
 
 
+def _remove_spring_bones():
+    """Remove existing SpringBoneHair NLA track and action."""
+    arm = _state['armature']
+    for track in list(arm.animation_data.nla_tracks):
+        if track.name == 'SpringBoneHair':
+            arm.animation_data.nla_tracks.remove(track)
+    if arm.animation_data.action:
+        arm.animation_data.action = None
+
+
 def _run_spring_bones(end_frame):
     """Run spring bone simulation for frames 1 to end_frame with fresh state."""
     arm = _state['armature']
@@ -353,7 +475,6 @@ def _run_spring_bones(end_frame):
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode='POSE')
 
-    # Record head rotations
     head_quats = []
     for frame in range(1, end_frame + 1):
         bpy.context.scene.frame_set(frame)
@@ -417,7 +538,7 @@ def _run_spring_bones(end_frame):
 
 
 # ============================================================================
-# Frame selection (action frames = scene frames, no NLA offset)
+# Frame selection (action frames = scene frames when strip is at frame 1)
 # ============================================================================
 
 def _sample_frames(start, end, count):
@@ -441,7 +562,6 @@ def _select_anim_frames(anim, action_end, reversed=False):
             expression = seg.get('expression', None)
 
             if reversed:
-                # Reversed NLA: action frame X displays at scene frame (action_end - X + 1)
                 s_start = action_end - a_end + 1
                 s_end = action_end - a_start + 1
             else:
@@ -492,8 +612,9 @@ def _set_expression(expression_name):
 
 def render_animation(anim_index):
     """
-    Import, set up, and render one animation. Each animation starts at frame 1.
-    Action frames in config map directly to scene frames.
+    Render one animation by muting others and shifting its strip to frame 1.
+    The character stays on the same armature (imported once via setup_scene).
+    Spring bones run fresh per animation. Action frames = scene frames.
 
     Call sequentially: render_animation(0), render_animation(1), ...
     Each call is self-contained (re-exec safe for MCP).
@@ -502,15 +623,18 @@ def render_animation(anim_index):
     if config is None:
         raise ValueError("No config loaded. Call load_config() first.")
 
+    arm = _state['armature']
+    if arm is None:
+        raise ValueError("No armature. Call setup_scene() or init_from_scene() first.")
+
     anim = config['animations'][anim_index]
-    fbx_path = os.path.join(ANIMATIONS_DIR, anim['fbx'])
     reversed = anim.get('reversed', False)
 
     # Compute frame cursor from previous animations
     cursor = sum(a['frames'] for a in config['animations'][:anim_index])
 
     print(f"\n{'='*50}")
-    print(f"Animation {anim_index}: {anim['name']} ({anim['fbx']})")
+    print(f"Animation {anim_index}: {anim['name']}")
     print(f"  Sprite frames {cursor+1}-{cursor+anim['frames']}")
     print(f"{'='*50}")
 
@@ -522,27 +646,49 @@ def render_animation(anim_index):
             if f.startswith('frame_') and f.endswith('.png'):
                 os.remove(os.path.join(out_dir, f))
 
-    # Clear old character, ensure lighting/render
-    _clear_character()
-    _ensure_scene()
+    # --- Mute all tracks except this one ---
+    target_track = None
+    for track in arm.animation_data.nla_tracks:
+        if track.name == 'SpringBoneHair':
+            continue
+        if track.name == anim['name']:
+            track.mute = False
+            target_track = track
+        else:
+            track.mute = True
 
-    # Import
-    action_end = _import_animation(fbx_path, reversed=reversed)
+    if target_track is None:
+        raise RuntimeError(f"NLA track '{anim['name']}' not found")
+
+    # --- Remove old spring bones ---
+    _remove_spring_bones()
+
+    # --- Shift strip to frame 1 ---
+    strip = target_track.strips[0]
+    orig_start = strip.frame_start
+    orig_end = strip.frame_end
+    duration = orig_end - orig_start
+    strip.frame_start = 1
+    strip.frame_end = 1 + duration
+    action_end = int(strip.frame_end)
+
+    print(f"  Shifted {anim['name']}: {orig_start}-{orig_end} -> 1-{action_end}")
+
+    # --- Set scene range ---
     bpy.context.scene.frame_start = 1
     bpy.context.scene.frame_end = action_end
-    print(f"  Imported: action frames 1-{action_end}")
 
-    # Camera
+    # --- Camera ---
     _setup_camera(action_end, global_bounds=config.get('global_camera', False))
 
-    # Spring bones (fresh state)
+    # --- Spring bones (fresh) ---
     _run_spring_bones(action_end)
 
-    # Select frames
+    # --- Select frames ---
     frames, expr_map = _select_anim_frames(anim, action_end, reversed=reversed)
     print(f"  Frames: {frames}")
 
-    # Render
+    # --- Render ---
     scene = bpy.context.scene
     for i, frame in enumerate(frames):
         idx = cursor + i
@@ -557,11 +703,22 @@ def render_animation(anim_index):
         expr_str = f" [{expression}]" if expression else ""
         print(f"    {fname}{expr_str}")
 
-    print(f"  Done ({anim['frames']} frames)")
+    # --- Restore strip position ---
+    strip.frame_start = orig_start
+    strip.frame_end = orig_end
+
+    # --- Unmute all ---
+    for track in arm.animation_data.nla_tracks:
+        track.mute = False
+
+    # --- Remove spring bones (will be wrong after restore) ---
+    _remove_spring_bones()
+
+    print(f"  Done ({anim['frames']} frames, strip restored to {orig_start}-{orig_end})")
 
 
 # ============================================================================
-# Assembly (same as render_sheet.py)
+# Assembly
 # ============================================================================
 
 def assemble_sheet(output_path=None):
@@ -779,9 +936,7 @@ def run_full_pipeline(config_path):
     print("=" * 60)
 
     config = load_config(config_path)
-
-    # Fresh start for CLI
-    bpy.ops.wm.read_factory_settings(use_empty=True)
+    setup_scene(config)
 
     for i in range(len(config['animations'])):
         render_animation(i)
@@ -796,7 +951,6 @@ def run_full_pipeline(config_path):
                          if f.startswith('frame_') and f.endswith('.png')])
     selected = []
     for fname in frame_files:
-        # Extract scene frame from filename: frame_NN_FFF.png
         parts = fname.replace('.png', '').split('_')
         selected.append(int(parts[2]))
     config['selected_frames'] = selected
@@ -826,4 +980,4 @@ if __name__ == "__main__":
             print("Usage: blender --background --python render_sheet_indv.py -- config.json")
     else:
         print("render_sheet_indv.py loaded. Call functions manually via MCP.")
-        print("  load_config(path) -> render_animation(0) -> ... -> assemble_sheet()")
+        print("  load_config(path) -> init_from_scene() -> render_animation(0) -> ...")

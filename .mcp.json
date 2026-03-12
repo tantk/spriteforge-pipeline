@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "blender": {
-      "command": "bash",
-      "args": ["scripts/blender_mcp_pick_port.sh"]
+      "command": "python",
+      "args": ["C:/Users/tanti/.local/bin/blender_mcp_pick_port.py"]
     }
   }
 }

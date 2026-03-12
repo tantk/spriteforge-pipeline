@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "blender": {
-      "command": "C:\\Users\\tanti\\.local\\bin\\uvx.exe",
-      "args": ["blender-mcp"]
+      "command": "bash",
+      "args": ["scripts/blender_mcp_pick_port.sh"]
     }
   }
 }

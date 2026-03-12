@@ -21,11 +21,11 @@
 
 ## Blender MCP (Multi-Port Setup)
 
-- Up to 4 worktrees can connect to Blender simultaneously on ports **9876–9879**
+- Up to 4 worktrees can connect to Blender simultaneously on ports **9871–9874**
 - Port selection is automatic — `.mcp.json` runs `blender_mcp_pick_port.py` (in `~/.local/bin/`)
 - The script uses `netstat` to detect occupied ports and picks the first free one
 - The Blender addon (`blender_mcp_addon.py`) rejects second connections to the same instance
 - **Blender side**: each instance must have a unique port set in N-panel > BlenderMCP, with "Connect to MCP server" clicked
 - **No manual config needed per worktree** — just restart the session and it auto-connects
-- **Check your port**: `cat .blender_port` to see which Blender instance you're connected to
+- **Check your port**: call `get_scene_info` — the `port` field in the response shows which Blender instance you're connected to
 - **NEVER use `bpy.ops.wm.read_factory_settings()`** — it resets the MCP addon and kills the connection. Clear the scene manually with `bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete()` instead

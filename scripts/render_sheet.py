@@ -498,9 +498,6 @@ def run_spring_bones(stiffness=SPRING_STIFFNESS, damping=SPRING_DAMPING,
     Run spring bone hair physics simulation and push to NLA.
     VRoid characters only (skips if no J_Sec_Hair* bones found).
 
-    Resets spring bone state at each animation boundary so hair physics
-    from one animation don't carry over into the next.
-
     Must run AFTER setup_camera() — frustum clamp depends on camera position.
     """
     arm = _state['armature']
@@ -511,58 +508,38 @@ def run_spring_bones(stiffness=SPRING_STIFFNESS, damping=SPRING_DAMPING,
         print("Spring bones: No hair chains found (Mixamo character?). Skipping.")
         return
 
-    # Get animation boundaries from NLA strips
-    anim_ranges = []
-    for track in arm.animation_data.nla_tracks:
-        if track.name == 'SpringBoneHair':
-            continue
-        for strip in track.strips:
-            anim_ranges.append((track.name, int(strip.frame_start), int(strip.frame_end)))
-    anim_ranges.sort(key=lambda x: x[1])
-
-    print(f"Spring bones: {len(chains)} hair chains, {len(anim_ranges)} animations")
+    print(f"Spring bones: {len(chains)} hair chains, {end_frame} frames")
 
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode='POSE')
 
-    head_pbone = arm.pose.bones.get('J_Bip_C_Head')
-    if head_pbone is None:
-        print("  Warning: J_Bip_C_Head not found. Skipping spring bones.")
-        bpy.ops.object.mode_set(mode='OBJECT')
-        return
-
-    # Step 1: Pre-record head quaternions (clean pass, no keyframe insertion)
-    head_quats = {}
+    # Record head rotations
+    head_quats = []
     for frame in range(1, end_frame + 1):
         bpy.context.scene.frame_set(frame)
+        head_pbone = arm.pose.bones.get('J_Bip_C_Head')
+        if head_pbone is None:
+            print("  Warning: J_Bip_C_Head not found. Skipping spring bones.")
+            bpy.ops.object.mode_set(mode='OBJECT')
+            return
         world_mat = arm.matrix_world @ head_pbone.matrix
-        head_quats[frame] = world_mat.to_quaternion()
+        head_quats.append(world_mat.to_quaternion())
 
-    # Step 2: Build set of animation start frames for state reset
-    reset_frames = {anim_start for _, anim_start, _ in anim_ranges}
-
-    # Step 3: Simulate with per-animation state reset
-    max_rad = math.radians(max_deg)
-    t = time.time()
-
+    # Init state
     state = {}
     for chain in chains:
         for bone_name in chain:
             state[bone_name] = {'ox': 0.0, 'oz': 0.0, 'vx': 0.0, 'vz': 0.0}
 
-    prev_quat = head_quats[1]
+    max_rad = math.radians(max_deg)
+    prev_quat = head_quats[0]
+    t = time.time()
 
-    for frame in range(1, end_frame + 1):
-        # Reset state at animation boundaries
-        if frame in reset_frames:
-            for chain in chains:
-                for bone_name in chain:
-                    state[bone_name] = {'ox': 0.0, 'oz': 0.0, 'vx': 0.0, 'vz': 0.0}
-            prev_quat = head_quats[frame]
-
+    for fi in range(len(head_quats)):
+        frame = fi + 1
         bpy.context.scene.frame_set(frame)
 
-        cur_quat = head_quats[frame]
+        cur_quat = head_quats[fi]
         delta = prev_quat.inverted() @ cur_quat
         delta_euler = delta.to_euler()
         prev_quat = cur_quat
@@ -590,8 +567,6 @@ def run_spring_bones(stiffness=SPRING_STIFFNESS, damping=SPRING_DAMPING,
                 pbone.rotation_mode = 'XYZ'
                 pbone.rotation_euler = (s['ox'], 0.0, s['oz'])
                 pbone.keyframe_insert(data_path='rotation_euler', frame=frame)
-
-    print(f"  Reset at frames: {sorted(reset_frames)}")
 
     bpy.ops.object.mode_set(mode='OBJECT')
     sim_time = time.time() - t

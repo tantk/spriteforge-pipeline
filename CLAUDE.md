@@ -28,3 +28,4 @@
 - **Blender side**: each instance must have a unique port set in N-panel > BlenderMCP, with "Connect to MCP server" clicked
 - **No manual config needed per worktree** — just restart the session and it auto-connects
 - **Check your port**: `cat .blender_port` to see which Blender instance you're connected to
+- **NEVER use `bpy.ops.wm.read_factory_settings()`** — it resets the MCP addon and kills the connection. Clear the scene manually with `bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete()` instead

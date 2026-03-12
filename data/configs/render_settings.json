@@ -1,0 +1,50 @@
+{
+    "engine": "BLENDER_EEVEE",
+    "resolution": [256, 256],
+    "color_management": {
+        "display_device": "sRGB",
+        "view_transform": "Standard",
+        "look": "None"
+    },
+    "background": {
+        "color": [1, 1, 1],
+        "world_strength": 1.0,
+        "film_transparent": false
+    },
+    "lighting": {
+        "type": "3-sun",
+        "shadows": false,
+        "lights": [
+            {"name": "Sun_Key",  "energy": 4.0, "rotation_deg": [30, 0, -20]},
+            {"name": "Sun_Fill", "energy": 2.5, "rotation_deg": [40, 0, 160]},
+            {"name": "Sun_Rim",  "energy": 1.5, "rotation_deg": [60, 0, 180]}
+        ]
+    },
+    "materials": {
+        "specular_ior_level": 0.0,
+        "roughness": 1.0
+    },
+    "freestyle": {
+        "enabled": true,
+        "contour": "external_contour",
+        "color": [0, 0, 0],
+        "thickness": 1.0
+    },
+    "camera": {
+        "type": "PERSP",
+        "lens_mm": 50,
+        "sensor_width_mm": 36,
+        "sensor_height_mm": 24,
+        "sensor_fit": "AUTO",
+        "base_location": [-2.4063, -0.3171, 0.6149],
+        "rotation_euler": [1.6393, -0.0000027, -1.4561]
+    },
+    "dynamic_camera": {
+        "target_bottom": 0.10,
+        "center_x": 0.50,
+        "mesh": "Body",
+        "vertex_subsample": 4,
+        "iterations": 8,
+        "tolerance": 0.008
+    }
+}

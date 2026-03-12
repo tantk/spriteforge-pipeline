@@ -1,0 +1,26 @@
+{
+    "name": "Hook + Right Hook",
+    "sheet_index": 4,
+    "prompt": "A 4x4 sprite sheet of a character performing a hook punch with body rotation through wind-up, strike, and follow-through, then a quick stationary right hook with wind-up, strike, and recovery.",
+    "animations": [
+        {
+            "name": "Hook",
+            "fbx": "Hook.fbx",
+            "frames": 8,
+            "reversed": false,
+            "description": "Hook punch with body rotation"
+        },
+        {
+            "name": "Right Hook",
+            "fbx": "Right Hook.fbx",
+            "frames": 8,
+            "reversed": false,
+            "description": "Quick stationary right hook"
+        }
+    ],
+    "selected_frames": [1, 9, 17, 25, 33, 41, 49, 57, 61, 65, 68, 72, 75, 79, 82, 86],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

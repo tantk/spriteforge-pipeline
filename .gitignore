@@ -1,0 +1,35 @@
+# Secrets
+.env
+
+# Node
+node_modules/
+
+# Large binary assets (not suitable for git)
+archive/
+*.blend
+*.blend1
+data/animations/
+data/characters/
+data/scenes/
+
+# Render frames (individual PNGs in subdirs) — sprite sheets and GIFs are kept
+data/renders/sheet_*/
+
+# Test/debug renders
+data/renders/test_*.png
+data/renders/compare_*.png
+data/renders/expression_*.png
+data/renders/face_*.png
+data/renders/face2_*.png
+data/renders/lighting_*.png
+
+# Python
+__pycache__/
+*.pyc
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# OS
+Thumbs.db
+.DS_Store

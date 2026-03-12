@@ -1,0 +1,19 @@
+{
+    "name": "Kicking",
+    "sheet_index": 7,
+    "prompt": "A 4x4 sprite sheet of a character performing a forward kick, starting from fighting stance, chambering the knee, extending the leg forward in a push kick, following through with full leg extension, then retracting and recovering to stance.",
+    "animations": [
+        {
+            "name": "Kicking",
+            "fbx": "Kicking.fbx",
+            "frames": 16,
+            "reversed": false,
+            "description": "Forward push kick with chamber, extension, and recovery"
+        }
+    ],
+    "selected_frames": [1, 6, 12, 17, 23, 28, 33, 39, 44, 50, 55, 60, 66, 71, 77, 82],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

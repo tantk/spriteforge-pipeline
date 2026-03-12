@@ -1,0 +1,26 @@
+{
+    "name": "Quad Punch",
+    "sheet_index": 5,
+    "prompt": "A 4x4 sprite sheet of a character in guard stance, then performing four rapid alternating punches: left jab forward, right cross, left hook, right hook, then recovering to idle stance.",
+    "animations": [
+        {
+            "name": "Quad Punch",
+            "fbx": "Quad Punch.fbx",
+            "frames": 16,
+            "reversed": false,
+            "segments": [
+                {"action_frames": [1, 8], "description": "Guard stance, preparing to punch"},
+                {"action_frames": [9, 13], "description": "Left jab forward"},
+                {"action_frames": [15, 19], "description": "Right cross"},
+                {"action_frames": [20, 24], "description": "Left hook"},
+                {"action_frames": [25, 30], "description": "Right hook"},
+                {"action_frames": [31, 53], "description": "Recovery to idle stance"}
+            ]
+        }
+    ],
+    "selected_frames": [1, 8, 9, 11, 13, 15, 17, 19, 20, 22, 24, 25, 28, 30, 31, 53],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

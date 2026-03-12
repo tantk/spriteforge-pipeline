@@ -1,0 +1,176 @@
+{
+    "project": "Qwen-Image LoRA Competition - 3D to Pixel Art Sprite Sheets",
+    "description": "Training data: 3D rendered sprite sheets (input) paired with pixel art versions (output)",
+    "format": {
+        "sheet_size": "1024x1024",
+        "grid": "4x4",
+        "frame_size": "256x256",
+        "frames_per_sheet": 16
+    },
+
+    "folders": {
+        "animations": "Mixamo FBX animation files (downloaded with skin). 45 animations.",
+        "characters": "Character source files. Subfolder per character (VRM, FBX, VRoid).",
+        "configs": "Sprite sheet configs (JSON). One per sheet, defines animations, segments, frame counts.",
+        "scenes": "Blender scene files (.blend). One per sheet, contains NLA setup, camera, hair physics.",
+        "renders": "Output. Per sheet: individual frames in subfolder, assembled PNG sprite sheet, GIF preview."
+    },
+
+    "characters": [
+        {
+            "id": "AvatarSample_B",
+            "source": "VRoid Studio",
+            "type": "anime",
+            "has_hair_physics": true,
+            "files": {
+                "vroid": "characters/AvatarSample_B/model.vroid",
+                "vrm": "characters/AvatarSample_B/AvatarSample_B.vrm",
+                "fbx": "characters/AvatarSample_B/AvatarSample_B.fbx"
+            }
+        }
+    ],
+
+    "sheets": [
+        {
+            "id": "sheet_01",
+            "name": "Idle + Walk",
+            "character": "AvatarSample_B",
+            "pipeline": "simple",
+            "config": "configs/sheet_01_idle_walk.json",
+            "scene": "scenes/sheet_01_idle_walk.blend",
+            "output": {
+                "spritesheet": "renders/sheet_01_idle_walk.png",
+                "gif": "renders/sheet_01_idle_walk.gif",
+                "frames_dir": "renders/sheet_01/"
+            },
+            "animations": [
+                {"name": "Idle", "fbx": "animations/Idle.fbx", "frames": 8, "reversed": false},
+                {"name": "Walking", "fbx": "animations/Walking.fbx", "frames": 4, "reversed": false},
+                {"name": "Walking Back", "fbx": "animations/Walking (1).fbx", "frames": 4, "reversed": true}
+            ],
+            "selected_frames_scene": "unknown (generated in previous session)",
+            "status": "rendered"
+        },
+        {
+            "id": "sheet_02",
+            "name": "Run Forward + Run To Rolling",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "pipeline_notes": "Root motion stripped (XY), dynamic camera (mesh-vertex iterative), frustum-clamped hair physics",
+            "config": "configs/sheet_02_run_roll.json",
+            "scene": "scenes/sheet_02_run_roll.blend",
+            "output": {
+                "spritesheet": "renders/sheet_02_run_roll.png",
+                "gif": "renders/sheet_02_run_roll.gif",
+                "frames_dir": "renders/sheet_02/"
+            },
+            "animations": [
+                {"name": "Run Forward", "fbx": "animations/Run Forward.fbx", "frames": 4, "reversed": false},
+                {"name": "Run To Rolling", "fbx": "animations/Run To Rolling.fbx", "frames": 12, "reversed": false}
+            ],
+            "selected_frames_scene": [1, 6, 10, 15, 16, 22, 23, 29, 30, 34, 37, 38, 42, 48, 58, 68],
+            "status": "rendered (hair physics needs re-run after camera change)"
+        },
+        {
+            "id": "sheet_03",
+            "name": "Left Right Hook",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "config": "configs/sheet_03_leftrighthook.json",
+            "scene": "scenes/sheet_03_leftrighthook.blend",
+            "output": {
+                "spritesheet": "renders/sheet_03_leftrighthook.png",
+                "gif": "renders/sheet_03_leftrighthook.gif",
+                "frames_dir": "renders/sheet_03/"
+            },
+            "animations": [
+                {"name": "Hook (1)", "fbx": "animations/Hook (1).fbx", "frames": 8, "reversed": false},
+                {"name": "Hook Punch", "fbx": "animations/Hook Punch.fbx", "frames": 8, "reversed": false}
+            ],
+            "selected_frames": [1, 8, 14, 21, 28, 35, 41, 48, 50, 57, 65, 72, 79, 86, 94, 101],
+            "status": "rendered"
+        },
+        {
+            "id": "sheet_04",
+            "name": "Hook + Right Hook",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "config": "configs/sheet_04_hookrighthook.json",
+            "scene": "scenes/sheet_04_hookrighthook.blend",
+            "output": {
+                "spritesheet": "renders/sheet_04_hookrighthook.png",
+                "gif": "renders/sheet_04_hookrighthook.gif",
+                "frames_dir": "renders/sheet_04/"
+            },
+            "animations": [
+                {"name": "Hook", "fbx": "animations/Hook.fbx", "frames": 8, "reversed": false},
+                {"name": "Right Hook", "fbx": "animations/Right Hook.fbx", "frames": 8, "reversed": false}
+            ],
+            "selected_frames": [1, 9, 17, 25, 33, 41, 49, 57, 61, 65, 68, 72, 75, 79, 82, 86],
+            "status": "rendered"
+        },
+        {
+            "id": "sheet_05",
+            "name": "Quad Punch",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "pipeline_notes": "Segment-based frame selection",
+            "config": "configs/sheet_05_quadpunch.json",
+            "scene": "scenes/sheet_05_quadpunch.blend",
+            "output": {
+                "spritesheet": "renders/sheet_05_quadpunch.png",
+                "gif": "renders/sheet_05_quadpunch.gif",
+                "frames_dir": "renders/sheet_05/"
+            },
+            "animations": [
+                {"name": "Quad Punch", "fbx": "animations/Quad Punch.fbx", "frames": 16, "reversed": false}
+            ],
+            "selected_frames": [1, 8, 9, 11, 13, 15, 17, 19, 20, 22, 24, 25, 28, 30, 31, 53],
+            "status": "rendered"
+        },
+        {
+            "id": "sheet_06",
+            "name": "Roundhouse Kick + Illegal Knee",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "pipeline_notes": "Animation orientation fix applied, segment-based frame selection, surprised expression on knee frames",
+            "config": "configs/sheet_06_roundhousekick_illegalknee.json",
+            "scene": "scenes/sheet_06_roundhousekick_illegalknee.blend",
+            "output": {
+                "spritesheet": "renders/sheet_06_roundhousekick_illegalknee.png",
+                "gif": "renders/sheet_06_roundhousekick_illegalknee.gif",
+                "frames_dir": "renders/sheet_06/"
+            },
+            "animations": [
+                {"name": "Illegal Knee", "fbx": "animations/Illegal Knee.fbx", "frames": 8, "reversed": false},
+                {"name": "Roundhouse Kick", "fbx": "animations/Roundhouse Kick.fbx", "frames": 8, "reversed": false}
+            ],
+            "selected_frames": [1, 9, 16, 24, 31, 39, 46, 54, 58, 65, 72, 79, 87, 94, 101, 108],
+            "status": "rendered"
+        },
+        {
+            "id": "sheet_07",
+            "name": "Kicking",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "config": "configs/sheet_07_kicking.json",
+            "scene": "scenes/sheet_07_kicking.blend",
+            "output": {
+                "spritesheet": "renders/sheet_07_kicking.png",
+                "gif": "renders/sheet_07_kicking.gif",
+                "frames_dir": "renders/sheet_07/"
+            },
+            "animations": [
+                {"name": "Kicking", "fbx": "animations/Kicking.fbx", "frames": 16, "reversed": false}
+            ],
+            "selected_frames": [1, 6, 12, 17, 23, 28, 33, 39, 44, 50, 55, 60, 66, 71, 77, 82],
+            "status": "rendered"
+        }
+    ],
+
+    "planned_sheets": [
+        {"id": "sheet_08", "theme": "Hit Reactions", "candidates": ["Head Hit", "Hit To Body", "Stomach Hit", "Reaction"]},
+        {"id": "sheet_09", "theme": "Death/Recovery", "candidates": ["Dying", "Falling Back Death", "Defeated", "Getting Up"]},
+        {"id": "sheet_10", "theme": "Movement", "candidates": ["Jump", "Long Step Forward", "Sprinting Forward Roll"]}
+    ]
+}

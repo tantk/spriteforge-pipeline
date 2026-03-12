@@ -1,0 +1,42 @@
+{
+    "name": "Idle + Walk",
+    "sheet_index": 1,
+    "prompt": "A 4x4 sprite sheet of a character in fighting idle stance with fists raised, then walking forward with left foot stepping out, extending into full stride, shifting weight to right foot, and completing the step cycle, then walking backward through the same phases in reverse.",
+    "animations": [
+        {
+            "name": "Idle",
+            "fbx": "Idle.fbx",
+            "frames": 8,
+            "reversed": false,
+            "description": "Fighting idle stance, fists raised, subtle body sway"
+        },
+        {
+            "name": "Walking",
+            "fbx": "Walking.fbx",
+            "frames": 4,
+            "reversed": false,
+            "segments": [
+                {"action_frames": [1, 7], "description": "Left foot stepping forward, right foot planted"},
+                {"action_frames": [8, 17], "description": "Left leg extended forward in full stride"},
+                {"action_frames": [18, 23], "description": "Weight shifting forward, right foot lifting off ground"},
+                {"action_frames": [24, 31], "description": "Right foot coming forward, completing step cycle"}
+            ]
+        },
+        {
+            "name": "Walking Back",
+            "fbx": "Walking (1).fbx",
+            "frames": 4,
+            "reversed": true,
+            "segments": [
+                {"action_frames": [1, 7], "description": "Right foot stepping backward, left foot planted"},
+                {"action_frames": [8, 17], "description": "Right leg extended back in full stride"},
+                {"action_frames": [18, 23], "description": "Weight shifting backward, left foot lifting"},
+                {"action_frames": [24, 31], "description": "Left foot stepping back, completing step cycle"}
+            ]
+        }
+    ],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

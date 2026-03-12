@@ -1,0 +1,59 @@
+{
+    "name": "Run Forward + Run To Rolling",
+    "sheet_index": 2,
+    "prompt": "A 4x4 sprite sheet of a character running forward, then leaning forward getting ready to roll, both hands reaching toward the ground for support, rolling with knees tucked in, using core strength to recover, pushing up with hands to stand, recovering to both legs standing, then continuing to run.",
+    "animations": [
+        {
+            "name": "Run Forward",
+            "fbx": "Run Forward.fbx",
+            "frames": 4,
+            "reversed": false,
+            "segments": [
+                {
+                    "action_frames": [1, 15],
+                    "description": "Running forward"
+                }
+            ]
+        },
+        {
+            "name": "Run To Rolling",
+            "fbx": "Run To Rolling.fbx",
+            "frames": 12,
+            "reversed": false,
+            "segments": [
+                {
+                    "action_frames": [1, 7],
+                    "description": "Lower body center of gravity, leaning forward getting ready to roll"
+                },
+                {
+                    "action_frames": [8, 14],
+                    "description": "Both hands towards the ground for support, body bend"
+                },
+                {
+                    "action_frames": [15, 22],
+                    "description": "Rolling, knees tucked in"
+                },
+                {
+                    "action_frames": [23, 27],
+                    "description": "Recovery, using core strength to get up"
+                },
+                {
+                    "action_frames": [28, 37],
+                    "description": "Using hands to support herself to get up"
+                },
+                {
+                    "action_frames": [38, 47],
+                    "description": "Recovering, both legs standing"
+                },
+                {
+                    "action_frames": [48, 59],
+                    "description": "Continue running"
+                }
+            ]
+        }
+    ],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

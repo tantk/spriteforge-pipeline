@@ -60,6 +60,7 @@ def _get_cam_z_rotation(rotations, frame):
     return DEFAULT_CAM_Z
 
 
+
 def _get_screen_bounds_at_frame(scene, meshes, frame, cam_z_rot):
     """Get screen-space bounds of deformed meshes at a specific frame.
 
@@ -191,7 +192,7 @@ def setup_camera_hybrid(state, reference_frame=None, padding=CAM_PADDING,
     # === Phase 2: Per-frame screen-space centering ===
     max_h_span = 0
     max_h_span_frame = reference_frame
-    frame_data = {}  # frame -> (h_center, cam_z_rot)
+    frame_data = {}  # frame -> (h_center, f_z_min, f_z_max, cam_z_rot)
 
     for f in range(state['scene_start'], state['scene_end'] + 1):
         f_z_rot = _get_cam_z_rotation(camera_rotations, f)
@@ -201,7 +202,7 @@ def setup_camera_hybrid(state, reference_frame=None, padding=CAM_PADDING,
         h_center = (f_h_min + f_h_max) / 2
         h_span = f_h_max - f_h_min
 
-        frame_data[f] = (h_center, f_z_rot)
+        frame_data[f] = (h_center, f_z_min, f_z_max, f_z_rot)
 
         if h_span > max_h_span:
             max_h_span = h_span
@@ -234,8 +235,12 @@ def setup_camera_hybrid(state, reference_frame=None, padding=CAM_PADDING,
     cam_data.ortho_scale = final_scale
 
     # === Bake camera keyframes ===
-    for f, (hc, z_rot) in frame_data.items():
-        pos = _cam_world_position(hc, cam_z, z_rot)
+    # Ground-anchored: cam_z fixed from reference ground level.
+    # If character goes below ground, track downward to avoid clipping.
+    for f, (hc, f_z_min, f_z_max, z_rot) in frame_data.items():
+        effective_ground = min(f_z_min, ground_z)
+        f_cam_z = effective_ground + final_scale * (0.5 - ground_margin)
+        pos = _cam_world_position(hc, f_cam_z, z_rot)
         cam_obj.location = pos
         cam_obj.rotation_euler = (CAM_BASE_ROTATION[0], CAM_BASE_ROTATION[1], z_rot)
         cam_obj.keyframe_insert(data_path='location', frame=f)
@@ -258,7 +263,7 @@ def setup_camera_hybrid(state, reference_frame=None, padding=CAM_PADDING,
     rot_info = f", {len(camera_rotations)} rotation ranges" if has_rotations else ""
     print(f"\nCamera HYBRID done: ortho_scale={final_scale:.3f}, cam_z={cam_z:.3f}, "
           f"{total_time:.1f}s{rot_info}")
-    print(f"  View range Z: [{ground_z - ground_margin * final_scale:.3f}, "
+    print(f"  View range Z (standing): [{ground_z - ground_margin * final_scale:.3f}, "
           f"{ground_z + final_scale * (1 - ground_margin):.3f}]")
 
     return cam_obj

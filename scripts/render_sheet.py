@@ -615,6 +615,17 @@ def select_frames(config=None):
     if config is None:
         config = _state['config']
 
+    # If hand-picked frames exist in config, use them directly
+    if 'selected_frames' in config:
+        all_frames = config['selected_frames']
+        expr_map = {}
+        _state['selected_frames'] = all_frames
+        _state['expression_map'] = expr_map
+        print(f"\n--- Frame Selection ({len(all_frames)} frames, from config) ---")
+        for i, f in enumerate(all_frames):
+            print(f"  Frame {i+1:2d}: scene={f}")
+        return all_frames, expr_map
+
     arm = _state['armature']
     nla_tracks = arm.animation_data.nla_tracks
 
@@ -1005,6 +1016,8 @@ def render_from_scene(config_path, blend_path=None):
     Camera mode is read from config "camera" field:
       - "hybrid": Ground-anchored + horizontal centering (camera_hybrid.py).
                   Supports "camera_reference_frame" and "camera_ortho_scale".
+      - "perframe_ground": Per-frame ground tracking (camera_perframe_ground.py).
+                  Both axes track per-frame. For animations with extreme vertical movement.
       - absent/null: Uses whatever camera is already in the .blend file.
 
     Usage:
@@ -1020,10 +1033,17 @@ def render_from_scene(config_path, blend_path=None):
     if blend_path:
         load_scene(blend_path)
 
+    # Override scene range from config (e.g., when .blend frame_end exceeds NLA)
+    if config.get('scene_end'):
+        _state['scene_end'] = config['scene_end']
+        print(f"  scene_end overridden to {_state['scene_end']}")
+
     # Camera setup from config
     camera_mode = config.get('camera')
     if camera_mode == 'hybrid':
         _setup_hybrid_camera(config)
+    elif camera_mode == 'perframe_ground':
+        _setup_perframe_ground_camera(config)
 
     setup_render_settings()
     frames, expr_map = select_frames(config)
@@ -1067,6 +1087,24 @@ def _setup_hybrid_camera(config):
     )
 
 
+def _setup_perframe_ground_camera(config):
+    """Set up per-frame ground tracking camera from config settings."""
+    import importlib.util
+    pfg_path = os.path.join(BASE_DIR, "scripts", "camera_perframe_ground.py")
+    spec = importlib.util.spec_from_file_location("camera_perframe_ground", pfg_path)
+    camera_pfg = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(camera_pfg)
+
+    ref_frame = config.get('camera_reference_frame')
+    ortho_override = config.get('camera_ortho_scale')
+
+    camera_pfg.setup_camera_perframe_ground(
+        _state,
+        reference_frame=ref_frame,
+        ortho_scale_override=ortho_override,
+    )
+
+
 def load_scene(blend_path):
     """
     Open a saved .blend file and populate _state from the existing scene.
@@ -1085,13 +1123,15 @@ def load_scene(blend_path):
 
     _state['armature'] = armature
     all_meshes = [c for c in armature.children if c.type == 'MESH']
-    # Filter out tracker/helper meshes (e.g., HipTracker, FootTracker)
-    _state['meshes'] = [m for m in all_meshes if 'Tracker' not in m.name]
+    # Filter out tracker/helper/marker meshes
+    _state['meshes'] = [m for m in all_meshes
+                        if 'Tracker' not in m.name and 'Marker' not in m.name]
     _state['scene_start'] = scene.frame_start
     _state['scene_end'] = scene.frame_end
 
-    # Hide tracker meshes from render
-    trackers = [m for m in all_meshes if 'Tracker' in m.name]
+    # Hide tracker/marker meshes from render
+    trackers = [m for m in all_meshes
+                if 'Tracker' in m.name or 'Marker' in m.name]
     for t in trackers:
         t.hide_render = True
         t.hide_viewport = True

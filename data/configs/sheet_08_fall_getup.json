@@ -106,22 +106,14 @@
                 {
                     "action_frames": [
                         80,
-                        82
+                        85
                     ],
                     "pick": 1,
                     "description": "On ground"
                 },
                 {
                     "action_frames": [
-                        83,
-                        86
-                    ],
-                    "pick": 1,
-                    "description": "Pushing up"
-                },
-                {
-                    "action_frames": [
-                        87,
+                        86,
                         91
                     ],
                     "pick": 1,
@@ -145,24 +137,32 @@
                 },
                 {
                     "action_frames": [
-                        115,
-                        122
+                        104,
+                        112
                     ],
                     "pick": 1,
                     "description": "Nearly up"
                 },
                 {
                     "action_frames": [
-                        126,
-                        132
+                        113,
+                        117
+                    ],
+                    "pick": 1,
+                    "description": "Straightening"
+                },
+                {
+                    "action_frames": [
+                        118,
+                        125
                     ],
                     "pick": 1,
                     "description": "Standing"
                 },
                 {
                     "action_frames": [
-                        134,
-                        141
+                        126,
+                        134
                     ],
                     "pick": 1,
                     "description": "Recovery stance"
@@ -183,13 +183,13 @@
         18,
         24,
         32,
-        134,
-        138,
+        136,
         142,
         148,
         154,
-        172,
-        182,
-        190
+        161,
+        168,
+        174,
+        183
     ]
 }

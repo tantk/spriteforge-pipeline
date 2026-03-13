@@ -175,99 +175,10 @@ class PIPELINE_OT_import_animation(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class PIPELINE_OT_render_camera(bpy.types.Operator):
-    bl_idname = "pipeline.render_camera"
-    bl_label = "Render Camera"
-    bl_description = "Ortho camera matching render_sheet.py: per-frame bounding box (tight framing)"
-
-    def execute(self, context):
-        import math
-        import time
-
-        scene = context.scene
-        cam = scene.camera
-        if not cam:
-            self.report({'ERROR'}, "No active camera")
-            return {'CANCELLED'}
-
-        arm = None
-        for obj in bpy.data.objects:
-            if obj.type == 'ARMATURE':
-                arm = obj
-                break
-        if not arm:
-            self.report({'ERROR'}, "No armature found")
-            return {'CANCELLED'}
-
-        meshes = [c for c in arm.children if c.type == 'MESH']
-        if not meshes:
-            self.report({'ERROR'}, "No meshes found under armature")
-            return {'CANCELLED'}
-
-        for c in list(cam.constraints):
-            cam.constraints.remove(c)
-        if cam.animation_data:
-            cam.animation_data_clear()
-        if cam.data.animation_data:
-            cam.data.animation_data_clear()
-
-        cam.data.type = 'ORTHO'
-        cam.rotation_euler = (math.pi / 2, 0, -math.pi / 2)
-
-        CAM_DEPTH = -2.4
-        CAM_PADDING = 1.15
-
-        t = time.time()
-        for f in range(scene.frame_start, scene.frame_end + 1):
-            scene.frame_set(f)
-            depsgraph = context.evaluated_depsgraph_get()
-
-            min_y, max_y = float('inf'), float('-inf')
-            min_z, max_z = float('inf'), float('-inf')
-
-            for mesh_obj in meshes:
-                eval_obj = mesh_obj.evaluated_get(depsgraph)
-                mesh_data = eval_obj.to_mesh()
-                for v in mesh_data.vertices:
-                    world_co = eval_obj.matrix_world @ v.co
-                    min_y = min(min_y, world_co.y)
-                    max_y = max(max_y, world_co.y)
-                    min_z = min(min_z, world_co.z)
-                    max_z = max(max_z, world_co.z)
-                eval_obj.to_mesh_clear()
-
-            center_y = (min_y + max_y) / 2
-            center_z = (min_z + max_z) / 2
-            ortho_scale = max(max_y - min_y, max_z - min_z) * CAM_PADDING
-
-            cam.location = (CAM_DEPTH, center_y, center_z)
-            cam.data.ortho_scale = ortho_scale
-            cam.keyframe_insert(data_path='location', frame=f)
-            cam.data.keyframe_insert(data_path='ortho_scale', frame=f)
-
-        elapsed = time.time() - t
-
-        # Snap viewport to camera
-        area = context.area
-        if area and area.type == 'VIEW_3D':
-            area.spaces[0].region_3d.view_perspective = 'CAMERA'
-        else:
-            for area in context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for space in area.spaces:
-                        if space.type == 'VIEW_3D':
-                            space.region_3d.view_perspective = 'CAMERA'
-                            break
-                    break
-
-        self.report({'INFO'}, f"Render camera: {scene.frame_end - scene.frame_start + 1} frames in {elapsed:.1f}s")
-        return {'FINISHED'}
-
-
-class PIPELINE_OT_global_camera(bpy.types.Operator):
-    bl_idname = "pipeline.global_camera"
-    bl_label = "Global Camera"
-    bl_description = "Ortho camera: fixed scale + ground-anchored Z + per-frame Y (consistent size)"
+class PIPELINE_OT_custom_camera(bpy.types.Operator):
+    bl_idname = "pipeline.custom_camera"
+    bl_label = "Custom Camera"
+    bl_description = "Set up ortho camera with per-frame bounding box tracking"
 
     def execute(self, context):
         import math
@@ -310,14 +221,8 @@ class PIPELINE_OT_global_camera(bpy.types.Operator):
         CAM_DEPTH = -2.4
         CAM_PADDING = 1.15
 
-        # First pass: collect global bounds + per-frame Y centers
+        # Bake per-frame keyframes from bounding box
         t = time.time()
-        g_min_z = float('inf')
-        g_max_z = float('-inf')
-        g_min_y = float('inf')
-        g_max_y = float('-inf')
-        frame_y_centers = {}
-
         for f in range(scene.frame_start, scene.frame_end + 1):
             scene.frame_set(f)
             depsgraph = context.evaluated_depsgraph_get()
@@ -338,24 +243,15 @@ class PIPELINE_OT_global_camera(bpy.types.Operator):
                     max_z = max(max_z, world_co.z)
                 eval_obj.to_mesh_clear()
 
-            frame_y_centers[f] = (min_y + max_y) / 2
-            g_min_z = min(g_min_z, min_z)
-            g_max_z = max(g_max_z, max_z)
-            g_min_y = min(g_min_y, min_y)
-            g_max_y = max(g_max_y, max_y)
+            center_y = (min_y + max_y) / 2
+            center_z = (min_z + max_z) / 2
+            ortho_scale = max(max_y - min_y, max_z - min_z) * CAM_PADDING
 
-        # Ortho scale from global bounds, Z anchored so ground is near bottom
-        span_z = g_max_z - g_min_z
-        span_y = g_max_y - g_min_y
-        ortho_scale = max(span_y, span_z) * CAM_PADDING
-        cam.data.ortho_scale = ortho_scale
-        # Put g_min_z at 5% from bottom of frame (small ground padding)
-        center_z = g_min_z + ortho_scale * 0.55
+            cam.location = (CAM_DEPTH, center_y, center_z)
+            cam.data.ortho_scale = ortho_scale
 
-        # Second pass: bake per-frame Y position with fixed Z
-        for f, cy in frame_y_centers.items():
-            cam.location = (CAM_DEPTH, cy, center_z)
             cam.keyframe_insert(data_path='location', frame=f)
+            cam.data.keyframe_insert(data_path='ortho_scale', frame=f)
 
         elapsed = time.time() - t
 
@@ -372,7 +268,7 @@ class PIPELINE_OT_global_camera(bpy.types.Operator):
                             break
                     break
 
-        self.report({'INFO'}, f"Global camera: {scene.frame_end - scene.frame_start + 1} frames, scale={ortho_scale:.2f}, {elapsed:.1f}s")
+        self.report({'INFO'}, f"Ortho camera: {scene.frame_end - scene.frame_start + 1} frames baked in {elapsed:.1f}s")
         return {'FINISHED'}
 
 
@@ -388,15 +284,13 @@ class PIPELINE_PT_panel(bpy.types.Panel):
         layout.operator("pipeline.reset_camera", icon='CAMERA_DATA')
         layout.operator("pipeline.import_animation", icon='IMPORT')
         layout.separator()
-        layout.operator("pipeline.render_camera", icon='VIEW_CAMERA')
-        layout.operator("pipeline.global_camera", icon='WORLD')
+        layout.operator("pipeline.custom_camera", icon='VIEW_CAMERA')
 
 
 classes = [
     PIPELINE_OT_reset_camera,
     PIPELINE_OT_import_animation,
-    PIPELINE_OT_render_camera,
-    PIPELINE_OT_global_camera,
+    PIPELINE_OT_custom_camera,
     PIPELINE_PT_panel,
 ]
 

@@ -2,7 +2,8 @@
   "mcpServers": {
     "blender": {
       "command": "C:/Users/tanti/.local/bin/uvx.exe",
-      "args": ["--from", "git+https://github.com/tantk/blender-mcp.git", "blender-mcp"]
+      "args": ["blender-mcp"],
+      "env": {"BLENDER_PORT": "9871"}
     }
   }
 }

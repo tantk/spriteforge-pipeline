@@ -4,6 +4,7 @@
     "scene": "sheet_01_idle_walk.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
+    "render_note": "NLA strips must use extrapolation=NOTHING (not HOLD). With HOLD, upper tracks override lower tracks outside their frame range, freezing earlier animations. The saved .blend has this fixed.",
     "prompt": "A 4x4 sprite sheet of a character in fighting idle stance with fists raised, then walking forward with left foot stepping out, extending into full stride, shifting weight to right foot, and completing the step cycle, then walking backward through the same phases in reverse.",
     "animations": [
         {
@@ -11,7 +12,17 @@
             "fbx": "Idle.fbx",
             "frames": 8,
             "reversed": false,
-            "description": "Fighting idle stance, fists raised, subtle body sway"
+            "description": "Fighting idle stance, fists raised, subtle body sway",
+            "segments": [
+                {"action_frames": [1, 5], "pick": 1},
+                {"action_frames": [6, 10], "pick": 1},
+                {"action_frames": [11, 14], "pick": 1},
+                {"action_frames": [15, 20], "pick": 1},
+                {"action_frames": [21, 26], "pick": 1},
+                {"action_frames": [27, 32], "pick": 1},
+                {"action_frames": [33, 39], "pick": 1},
+                {"action_frames": [40, 45], "pick": 1}
+            ]
         },
         {
             "name": "Walking",
@@ -19,34 +30,10 @@
             "frames": 4,
             "reversed": false,
             "segments": [
-                {
-                    "action_frames": [
-                        1,
-                        7
-                    ],
-                    "description": "Left foot stepping forward, right foot planted"
-                },
-                {
-                    "action_frames": [
-                        8,
-                        17
-                    ],
-                    "description": "Left leg extended forward in full stride"
-                },
-                {
-                    "action_frames": [
-                        18,
-                        23
-                    ],
-                    "description": "Weight shifting forward, right foot lifting off ground"
-                },
-                {
-                    "action_frames": [
-                        24,
-                        31
-                    ],
-                    "description": "Right foot coming forward, completing step cycle"
-                }
+                {"action_frames": [9, 11], "pick": 1},
+                {"action_frames": [12, 16], "pick": 1},
+                {"action_frames": [21, 21], "pick": 1},
+                {"action_frames": [26, 29], "pick": 1}
             ]
         },
         {
@@ -55,57 +42,15 @@
             "frames": 4,
             "reversed": true,
             "segments": [
-                {
-                    "action_frames": [
-                        1,
-                        7
-                    ],
-                    "description": "Right foot stepping backward, left foot planted"
-                },
-                {
-                    "action_frames": [
-                        8,
-                        17
-                    ],
-                    "description": "Right leg extended back in full stride"
-                },
-                {
-                    "action_frames": [
-                        18,
-                        23
-                    ],
-                    "description": "Weight shifting backward, left foot lifting"
-                },
-                {
-                    "action_frames": [
-                        24,
-                        31
-                    ],
-                    "description": "Left foot stepping back, completing step cycle"
-                }
+                {"action_frames": [6, 8], "pick": 1},
+                {"action_frames": [15, 15], "pick": 1},
+                {"action_frames": [19, 22], "pick": 1},
+                {"action_frames": [23, 27], "pick": 1}
             ]
         }
     ],
     "total_frames": 16,
     "grid": "4x4",
     "resolution": "1024x1024",
-    "frame_size": "256x256",
-    "selected_frames": [
-        4,
-        8,
-        14,
-        17,
-        23,
-        29,
-        39,
-        44,
-        63,
-        68,
-        75,
-        83,
-        92,
-        100,
-        105,
-        109
-    ]
+    "frame_size": "256x256"
 }

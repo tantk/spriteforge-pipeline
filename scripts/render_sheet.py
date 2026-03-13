@@ -597,11 +597,14 @@ def run_spring_bones(stiffness=SPRING_STIFFNESS, damping=SPRING_DAMPING,
 # ============================================================================
 
 def _sample_frames(start, end, count):
-    """Pick count evenly-spaced frames from [start, end] inclusive."""
-    if count == 1:
-        return [round((start + end) / 2)]
-    step = (end - start) / (count - 1)
-    return [round(start + i * step) for i in range(count)]
+    """Pick count random frames from [start, end] inclusive, sorted."""
+    import random
+    if start == end:
+        return [start] * count
+    pool = list(range(start, end + 1))
+    if count >= len(pool):
+        return sorted(pool[:count])
+    return sorted(random.sample(pool, count))
 
 
 def select_frames(config=None):
@@ -614,17 +617,6 @@ def select_frames(config=None):
     """
     if config is None:
         config = _state['config']
-
-    # If hand-picked frames exist in config, use them directly
-    if 'selected_frames' in config:
-        all_frames = config['selected_frames']
-        expr_map = {}
-        _state['selected_frames'] = all_frames
-        _state['expression_map'] = expr_map
-        print(f"\n--- Frame Selection ({len(all_frames)} frames, from config) ---")
-        for i, f in enumerate(all_frames):
-            print(f"  Frame {i+1:2d}: scene={f}")
-        return all_frames, expr_map
 
     arm = _state['armature']
     nla_tracks = arm.animation_data.nla_tracks
@@ -1055,11 +1047,6 @@ def render_from_scene(config_path, blend_path=None):
     assemble_sheet()
     create_gif()
 
-    config['selected_frames'] = frames
-    with open(_state['config_path'], 'w') as f:
-        json.dump(config, f, indent=4)
-    print(f"Config updated with selected_frames")
-
     print("\n" + "=" * 60)
     print("PIPELINE COMPLETE (from scene)")
     print(f"  Sprite sheet: {_state['sheet_path']}")
@@ -1180,12 +1167,6 @@ def run_full_pipeline(config_path):
     assemble_sheet()
     create_gif()
     save_scene()
-
-    # Update config with selected frames
-    config['selected_frames'] = frames
-    with open(_state['config_path'], 'w') as f:
-        json.dump(config, f, indent=4)
-    print(f"Config updated with selected_frames")
 
     print("\n" + "=" * 60)
     print("PIPELINE COMPLETE")

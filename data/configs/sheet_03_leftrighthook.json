@@ -2,6 +2,8 @@
     "name": "Left Right Hook",
     "sheet_index": 3,
     "scene": "sheet_03_leftrighthook.blend",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
     "prompt": "A 4x4 sprite sheet of a character performing a left hook with left foot stepping forward through wind-up, strike, and follow-through, then a stationary right hook punch with wind-up, strike, and recovery.",
     "animations": [
         {

@@ -2,6 +2,8 @@
     "name": "Hook + Right Hook",
     "sheet_index": 4,
     "scene": "sheet_04_hookrighthook.blend",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
     "prompt": "A 4x4 sprite sheet of a character performing a hook punch with body rotation through wind-up, strike, and follow-through, then a quick stationary right hook with wind-up, strike, and recovery.",
     "animations": [
         {

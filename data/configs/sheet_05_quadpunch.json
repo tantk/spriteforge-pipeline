@@ -2,6 +2,8 @@
     "name": "Quad Punch",
     "sheet_index": 5,
     "scene": "sheet_05_quadpunch.blend",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
     "prompt": "A 4x4 sprite sheet of a character in guard stance, then performing four rapid alternating punches: left jab forward, right cross, left hook, right hook, then recovering to idle stance.",
     "animations": [
         {

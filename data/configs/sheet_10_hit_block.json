@@ -2,6 +2,8 @@
     "name": "Hit & Block",
     "sheet_index": 10,
     "scene": "sheet_10_hit_block.blend",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
     "prompt": "A 4x4 sprite sheet of a character being hit and blocking attacks. Row 1: head hit reaction with surprised expression during impact. Row 2: medium hit to the head with surprised expression during impact. Row 3: stomach hit reaction with surprised expression during impact. Row 4: blocking stance with arms raised to deflect.",
     "animations": [
         {

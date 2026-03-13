@@ -9,12 +9,12 @@
             "frames": 16,
             "reversed": false,
             "segments": [
-                {"action_frames": [1, 8], "description": "Guard stance, preparing to punch"},
-                {"action_frames": [9, 13], "description": "Left jab forward"},
-                {"action_frames": [15, 19], "description": "Right cross"},
-                {"action_frames": [20, 24], "description": "Left hook"},
-                {"action_frames": [25, 30], "description": "Right hook"},
-                {"action_frames": [31, 53], "description": "Recovery to idle stance"}
+                {"action_frames": [1, 8], "pick": 2, "description": "Guard stance, preparing to punch"},
+                {"action_frames": [9, 13], "pick": 3, "description": "Left jab forward"},
+                {"action_frames": [15, 19], "pick": 3, "description": "Right cross"},
+                {"action_frames": [20, 24], "pick": 3, "description": "Left hook"},
+                {"action_frames": [25, 30], "pick": 3, "description": "Right hook"},
+                {"action_frames": [31, 53], "pick": 2, "description": "Recovery to idle stance"}
             ]
         }
     ],

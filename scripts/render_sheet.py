@@ -396,10 +396,11 @@ def setup_camera(global_bounds=False):
     if global_bounds:
         # Hybrid: per-frame Y centering + fixed Z + fixed scale
         # Ground stays in same place, character tracks horizontally only
+        # NOTE: ortho_scale uses max per-frame Y span (character width),
+        # NOT global Y range (travel distance), since camera tracks Y.
         g_min_z = float('inf')
         g_max_z = float('-inf')
-        g_min_y = float('inf')
-        g_max_y = float('-inf')
+        max_frame_y_span = 0
         frame_y_centers = {}
 
         for f in range(_state['scene_start'], _state['scene_end'] + 1):
@@ -423,15 +424,13 @@ def setup_camera(global_bounds=False):
                 eval_obj.to_mesh_clear()
 
             frame_y_centers[f] = (min_y + max_y) / 2
+            max_frame_y_span = max(max_frame_y_span, max_y - min_y)
             g_min_z = min(g_min_z, min_z)
             g_max_z = max(g_max_z, max_z)
-            g_min_y = min(g_min_y, min_y)
-            g_max_y = max(g_max_y, max_y)
 
         center_z = (g_min_z + g_max_z) / 2
         span_z = g_max_z - g_min_z
-        span_y = g_max_y - g_min_y
-        ortho_scale = max(span_y, span_z) * CAM_PADDING
+        ortho_scale = max(max_frame_y_span, span_z) * CAM_PADDING
         cam_obj.data.ortho_scale = ortho_scale
 
         # Bake per-frame Y position, fixed Z
@@ -997,34 +996,34 @@ def render_from_scene(config_path, blend_path=None):
     """
     Render sprite sheet from a pre-configured .blend file.
 
-    Skips setup_scene() and setup_camera() — uses whatever camera, NLA,
-    and animation edits are already baked into the .blend file.
-    Use this for sheets with custom edits (e.g., animation alignment,
-    per-range camera/armature rotation, ground-anchored camera).
+    Loads the .blend (preserving baked animation edits, armature orientation,
+    etc.), optionally sets up hybrid camera, then renders.
 
-    Usage via Blender MCP (step by step):
+    The .blend path can be passed as an argument or set in the config JSON
+    as "scene": "filename.blend" (resolved relative to data/scenes/).
+
+    Camera mode is read from config "camera" field:
+      - "hybrid": Ground-anchored + horizontal centering (camera_hybrid.py).
+                  Supports "camera_reference_frame" and "camera_ortho_scale".
+      - absent/null: Uses whatever camera is already in the .blend file.
+
+    Usage:
         exec(open(r"C:\\dev\\loracomp3\\scripts\\render_sheet.py").read())
-        render_from_scene(
-            r"C:\\dev\\loracomp3\\data\\configs\\sheet_08_fall_getup.json",
-            r"C:\\dev\\loracomp3\\data\\scenes\\sheet_08_fall_getup.blend",
-        )
-
-    Or step by step:
-        config = load_config(r"C:\\dev\\loracomp3\\data\\configs\\sheet_08_fall_getup.json")
-        load_scene(r"C:\\dev\\loracomp3\\data\\scenes\\sheet_08_fall_getup.blend")
-        setup_render_settings()
-        frames, expr_map = select_frames(config)
-        render_batch(frames, expr_map, 0, 4)
-        render_batch(frames, expr_map, 4, 8)
-        render_batch(frames, expr_map, 8, 12)
-        render_batch(frames, expr_map, 12, 16)
-        assemble_sheet()
-        create_gif()
+        render_from_scene(r"C:\\dev\\loracomp3\\data\\configs\\sheet_08_fall_getup.json")
     """
     config = load_config(config_path)
 
+    # Resolve .blend path
+    if blend_path is None and config.get('scene'):
+        blend_path = os.path.join(SCENES_DIR, config['scene'])
+
     if blend_path:
         load_scene(blend_path)
+
+    # Camera setup from config
+    camera_mode = config.get('camera')
+    if camera_mode == 'hybrid':
+        _setup_hybrid_camera(config)
 
     setup_render_settings()
     frames, expr_map = select_frames(config)
@@ -1048,6 +1047,24 @@ def render_from_scene(config_path, blend_path=None):
     print("=" * 60)
 
 
+def _setup_hybrid_camera(config):
+    """Set up hybrid camera from config settings."""
+    import importlib.util
+    hybrid_path = os.path.join(BASE_DIR, "scripts", "camera_hybrid.py")
+    spec = importlib.util.spec_from_file_location("camera_hybrid", hybrid_path)
+    camera_hybrid = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(camera_hybrid)
+
+    ref_frame = config.get('camera_reference_frame')
+    ortho_override = config.get('camera_ortho_scale')
+
+    camera_hybrid.setup_camera_hybrid(
+        _state,
+        reference_frame=ref_frame,
+        ortho_scale_override=ortho_override,
+    )
+
+
 def load_scene(blend_path):
     """
     Open a saved .blend file and populate _state from the existing scene.
@@ -1065,9 +1082,17 @@ def load_scene(blend_path):
         raise RuntimeError(f"No armature found in {blend_path}")
 
     _state['armature'] = armature
-    _state['meshes'] = [c for c in armature.children if c.type == 'MESH']
+    all_meshes = [c for c in armature.children if c.type == 'MESH']
+    # Filter out tracker/helper meshes (e.g., HipTracker, FootTracker)
+    _state['meshes'] = [m for m in all_meshes if 'Tracker' not in m.name]
     _state['scene_start'] = scene.frame_start
     _state['scene_end'] = scene.frame_end
+
+    # Hide tracker meshes from render
+    trackers = [m for m in all_meshes if 'Tracker' in m.name]
+    for t in trackers:
+        t.hide_render = True
+        t.hide_viewport = True
 
     # Find Face mesh (for expressions)
     _state['face_obj'] = None
@@ -1081,6 +1106,8 @@ def load_scene(blend_path):
     print(f"Loaded scene: {blend_path}")
     print(f"  Armature: {armature.name}")
     print(f"  Meshes: {[m.name for m in _state['meshes']]}")
+    if trackers:
+        print(f"  Hidden trackers: {[t.name for t in trackers]}")
     print(f"  Scene range: {scene.frame_start}-{scene.frame_end}")
     print(f"  Face mesh: {_state['face_obj'].name if _state['face_obj'] else 'None'}")
 

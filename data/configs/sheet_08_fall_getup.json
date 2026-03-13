@@ -2,7 +2,10 @@
     "name": "Fall + Get Up",
     "sheet_index": 8,
     "prompt": "A 4x4 sprite sheet of a character falling backwards to the ground and then getting back up to standing position.",
-    "global_camera": true,
+    "scene": "sheet_08_fall_getup.blend",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
+    "camera_ortho_scale": 1.657,
     "animations": [
         {
             "name": "Falling Back Death",
@@ -86,19 +89,11 @@
             "segments": [
                 {
                     "action_frames": [
-                        12,
-                        12
+                        80,
+                        82
                     ],
                     "pick": 1,
                     "description": "On ground"
-                },
-                {
-                    "action_frames": [
-                        79,
-                        79
-                    ],
-                    "pick": 1,
-                    "description": "Start rising"
                 },
                 {
                     "action_frames": [
@@ -111,14 +106,22 @@
                 {
                     "action_frames": [
                         87,
-                        93
+                        91
                     ],
                     "pick": 1,
                     "description": "Halfway up"
                 },
                 {
                     "action_frames": [
-                        94,
+                        92,
+                        97
+                    ],
+                    "pick": 1,
+                    "description": "Getting up"
+                },
+                {
+                    "action_frames": [
+                        98,
                         103
                     ],
                     "pick": 1,
@@ -164,13 +167,13 @@
         18,
         24,
         32,
-        118,
-        185,
-        190,
-        196,
-        204,
-        224,
-        235,
-        244
+        134,
+        138,
+        142,
+        148,
+        154,
+        172,
+        182,
+        190
     ]
 }

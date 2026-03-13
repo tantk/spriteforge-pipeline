@@ -11,6 +11,7 @@
             "segments": [
                 {
                     "action_frames": [1, 15],
+                    "pick": 4,
                     "description": "Running forward"
                 }
             ]
@@ -23,30 +24,37 @@
             "segments": [
                 {
                     "action_frames": [1, 7],
+                    "pick": 2,
                     "description": "Lower body center of gravity, leaning forward getting ready to roll"
                 },
                 {
                     "action_frames": [8, 14],
+                    "pick": 2,
                     "description": "Both hands towards the ground for support, body bend"
                 },
                 {
                     "action_frames": [15, 22],
+                    "pick": 2,
                     "description": "Rolling, knees tucked in"
                 },
                 {
                     "action_frames": [23, 27],
+                    "pick": 1,
                     "description": "Recovery, using core strength to get up"
                 },
                 {
                     "action_frames": [28, 37],
+                    "pick": 2,
                     "description": "Using hands to support herself to get up"
                 },
                 {
                     "action_frames": [38, 47],
+                    "pick": 2,
                     "description": "Recovering, both legs standing"
                 },
                 {
                     "action_frames": [48, 59],
+                    "pick": 1,
                     "description": "Continue running"
                 }
             ]
@@ -55,5 +63,6 @@
     "total_frames": 16,
     "grid": "4x4",
     "resolution": "1024x1024",
-    "frame_size": "256x256"
+    "frame_size": "256x256",
+    "global_camera": true
 }

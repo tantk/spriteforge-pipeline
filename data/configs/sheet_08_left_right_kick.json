@@ -1,0 +1,46 @@
+{
+    "name": "Left Right Kick",
+    "sheet_index": 8,
+    "prompt": "A 4x4 sprite sheet of a character performing a left-right kick combo from a three-quarter view. First half: a capoeira martelo roundhouse kick with the left leg, chambering the knee, extending the leg with a surprised expression at full extension, then recovering. Second half: a mirrored bencao push kick with the right leg forward, stepping in, thrusting the foot forward with a surprised expression, then pulling back to stance.",
+    "animations": [
+        {
+            "name": "Martelo 2",
+            "fbx": "Martelo 2.fbx",
+            "frames": 8,
+            "reversed": false,
+            "description": "Capoeira martelo kick with left leg",
+            "segments": [
+                {"action_frames": [1, 4], "pick": 1},
+                {"action_frames": [5, 7], "pick": 1},
+                {"action_frames": [8, 9], "pick": 1, "expression": "surprised"},
+                {"action_frames": [10, 10], "pick": 1, "expression": "surprised"},
+                {"action_frames": [11, 17], "pick": 1, "expression": "surprised"},
+                {"action_frames": [18, 20], "pick": 1},
+                {"action_frames": [21, 24], "pick": 1},
+                {"action_frames": [25, 27], "pick": 1}
+            ]
+        },
+        {
+            "name": "Bencao",
+            "fbx": "Bencao.fbx",
+            "frames": 8,
+            "reversed": false,
+            "mirror": true,
+            "description": "Capoeira bencao kick mirrored (right leg forward)",
+            "segments": [
+                {"action_frames": [1, 4], "pick": 1},
+                {"action_frames": [5, 8], "pick": 1},
+                {"action_frames": [9, 10], "pick": 1},
+                {"action_frames": [11, 12], "pick": 1, "expression": "surprised"},
+                {"action_frames": [13, 15], "pick": 1, "expression": "surprised"},
+                {"action_frames": [16, 20], "pick": 1, "expression": "surprised"},
+                {"action_frames": [21, 24], "pick": 1},
+                {"action_frames": [25, 29], "pick": 1}
+            ]
+        }
+    ],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

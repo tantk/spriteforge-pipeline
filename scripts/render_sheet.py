@@ -6,7 +6,7 @@ Automated pipeline to render a sprite sheet from a config JSON.
 Usage via Blender CLI:
     blender --background --python scripts/render_sheet.py -- data/configs/sheet_XX.json
 
-Usage via Blender MCP (step by step):
+Usage via Blender MCP (step by step, fresh scene):
     exec(open(r"C:\dev\loracomp3\scripts\render_sheet.py").read())
     config = load_config(r"C:\dev\loracomp3\data\configs\sheet_06_roundhousekick_illegalknee.json")
     setup_scene(config)
@@ -22,6 +22,13 @@ Usage via Blender MCP (step by step):
     assemble_sheet()
     create_gif()
     save_scene()
+
+Usage via Blender MCP (from pre-configured .blend file):
+    exec(open(r"C:\dev\loracomp3\scripts\render_sheet.py").read())
+    render_from_scene(
+        r"C:\dev\loracomp3\data\configs\sheet_08_fall_getup.json",
+        r"C:\dev\loracomp3\data\scenes\sheet_08_fall_getup.blend",
+    )
 
 CRITICAL GOTCHAS:
 - Camera rotation MUST be (pi/2, 0, -pi/2) for +X facing. (pi/2, 0, +pi/2) renders BLANK.
@@ -980,6 +987,102 @@ def save_scene(filepath=None):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     bpy.ops.wm.save_as_mainfile(filepath=filepath)
     print(f"Scene saved: {filepath}")
+
+
+# ============================================================================
+# Render from pre-configured scene
+# ============================================================================
+
+def render_from_scene(config_path, blend_path=None):
+    """
+    Render sprite sheet from a pre-configured .blend file.
+
+    Skips setup_scene() and setup_camera() — uses whatever camera, NLA,
+    and animation edits are already baked into the .blend file.
+    Use this for sheets with custom edits (e.g., animation alignment,
+    per-range camera/armature rotation, ground-anchored camera).
+
+    Usage via Blender MCP (step by step):
+        exec(open(r"C:\\dev\\loracomp3\\scripts\\render_sheet.py").read())
+        render_from_scene(
+            r"C:\\dev\\loracomp3\\data\\configs\\sheet_08_fall_getup.json",
+            r"C:\\dev\\loracomp3\\data\\scenes\\sheet_08_fall_getup.blend",
+        )
+
+    Or step by step:
+        config = load_config(r"C:\\dev\\loracomp3\\data\\configs\\sheet_08_fall_getup.json")
+        load_scene(r"C:\\dev\\loracomp3\\data\\scenes\\sheet_08_fall_getup.blend")
+        setup_render_settings()
+        frames, expr_map = select_frames(config)
+        render_batch(frames, expr_map, 0, 4)
+        render_batch(frames, expr_map, 4, 8)
+        render_batch(frames, expr_map, 8, 12)
+        render_batch(frames, expr_map, 12, 16)
+        assemble_sheet()
+        create_gif()
+    """
+    config = load_config(config_path)
+
+    if blend_path:
+        load_scene(blend_path)
+
+    setup_render_settings()
+    frames, expr_map = select_frames(config)
+
+    for batch_start in range(0, len(frames), 4):
+        batch_end = min(batch_start + 4, len(frames))
+        render_batch(frames, expr_map, batch_start, batch_end)
+
+    assemble_sheet()
+    create_gif()
+
+    config['selected_frames'] = frames
+    with open(_state['config_path'], 'w') as f:
+        json.dump(config, f, indent=4)
+    print(f"Config updated with selected_frames")
+
+    print("\n" + "=" * 60)
+    print("PIPELINE COMPLETE (from scene)")
+    print(f"  Sprite sheet: {_state['sheet_path']}")
+    print(f"  GIF: {_state['gif_path']}")
+    print("=" * 60)
+
+
+def load_scene(blend_path):
+    """
+    Open a saved .blend file and populate _state from the existing scene.
+    """
+    bpy.ops.wm.open_mainfile(filepath=blend_path)
+
+    scene = bpy.context.scene
+    armature = None
+    for obj in bpy.data.objects:
+        if obj.type == 'ARMATURE':
+            armature = obj
+            break
+
+    if armature is None:
+        raise RuntimeError(f"No armature found in {blend_path}")
+
+    _state['armature'] = armature
+    _state['meshes'] = [c for c in armature.children if c.type == 'MESH']
+    _state['scene_start'] = scene.frame_start
+    _state['scene_end'] = scene.frame_end
+
+    # Find Face mesh (for expressions)
+    _state['face_obj'] = None
+    for obj in _state['meshes']:
+        if obj.data.shape_keys:
+            keys = [k.name for k in obj.data.shape_keys.key_blocks]
+            if 'Fcl_ALL_Surprised' in keys:
+                _state['face_obj'] = obj
+                break
+
+    print(f"Loaded scene: {blend_path}")
+    print(f"  Armature: {armature.name}")
+    print(f"  Meshes: {[m.name for m in _state['meshes']]}")
+    print(f"  Scene range: {scene.frame_start}-{scene.frame_end}")
+    print(f"  Face mesh: {_state['face_obj'].name if _state['face_obj'] else 'None'}")
 
 
 # ============================================================================

@@ -1,0 +1,36 @@
+{
+    "name": "Armada",
+    "sheet_index": 9,
+    "prompt": "A 4x4 sprite sheet of a character performing a capoeira armada spinning kick from a three-quarter view. Starting from fighting stance, winding up and turning, spinning with her back to the camera while the kicking leg sweeps around with a surprised expression during the kick's apex, then following through and recovering back to stance.",
+    "animations": [
+        {
+            "name": "Armada",
+            "fbx": "Armada.fbx",
+            "frames": 16,
+            "reversed": false,
+            "description": "Capoeira armada spinning kick",
+            "segments": [
+                {"action_frames": [1, 3], "pick": 1},
+                {"action_frames": [4, 5], "pick": 1},
+                {"action_frames": [6, 8], "pick": 1},
+                {"action_frames": [9, 10], "pick": 1},
+                {"action_frames": [11, 13], "pick": 1},
+                {"action_frames": [14, 16], "pick": 1},
+                {"action_frames": [17, 17], "pick": 1},
+                {"action_frames": [18, 19], "pick": 1, "expression": "surprised"},
+                {"action_frames": [20, 22], "pick": 1, "expression": "surprised"},
+                {"action_frames": [23, 24], "pick": 1, "expression": "surprised"},
+                {"action_frames": [25, 27], "pick": 1, "expression": "surprised"},
+                {"action_frames": [28, 30], "pick": 1, "expression": "surprised"},
+                {"action_frames": [31, 32], "pick": 1, "expression": "surprised"},
+                {"action_frames": [33, 35], "pick": 1},
+                {"action_frames": [36, 37], "pick": 1},
+                {"action_frames": [38, 40], "pick": 1}
+            ]
+        }
+    ],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

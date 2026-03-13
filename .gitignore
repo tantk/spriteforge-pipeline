@@ -17,6 +17,9 @@ data/renders/sheet_*/
 # Test output (test renders, debug images)
 tests/output/
 
+# Test/debug renders
+data/renders/test/
+
 # Test/debug renders (legacy location)
 data/renders/test_*.png
 data/renders/compare_*.png

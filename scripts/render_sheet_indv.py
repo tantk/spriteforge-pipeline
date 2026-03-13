@@ -1,33 +1,33 @@
 """
-Sprite Sheet Render Pipeline (Per-Animation)
-=============================================
-Imports all animations into sequential NLA on one armature, then renders
-each animation independently by muting others and shifting to frame 1.
-Spring bones get fresh state per animation -- no carry-over.
-Action frames in config map directly to scene frames (strip at frame 1).
+Sprite Sheet Render Pipeline (Hybrid)
+======================================
+Runs spring bones ONCE across the full sequential NLA timeline, then renders:
+- Normal animations: directly from sequential NLA positions
+- Shifted animations: mute others, shift to frame 1, use existing spring bones
 
-Usage via Blender CLI:
-    blender --background --python scripts/render_sheet_indv.py -- data/configs/sheet_XX.json
+This avoids both the hair carry-over problem (from sequential rendering of later
+animations) and the hair-fly problem (from fresh FBX imports or per-animation
+spring bone resets).
 
 Usage via Blender MCP (step by step):
     exec(open(r"C:\dev\loracomp3\scripts\render_sheet_indv.py").read())
     load_config(r"C:\dev\loracomp3\data\configs\sheet_10_hit_block.json")
-    # If scene already has the NLA setup (e.g., loaded from .blend):
-    init_from_scene()
-    # If starting fresh (kills MCP connection!):
-    # setup_scene()
-    render_animation(0)   # Mute others, shift to frame 1, render
-    render_animation(1)
-    render_animation(2)
-    render_animation(3)
+    init_from_scene()          # or setup_scene() for fresh start
+    run_spring_bones()         # one continuous pass over full timeline
+    render_normal(0, 12)       # first 3 animations from sequential NLA
+    render_shifted(3)          # Block: mute, shift, render, restore
     assemble_sheet()
     create_gif()
+
+Usage via Blender CLI:
+    blender --background --python scripts/render_sheet_indv.py -- data/configs/sheet_XX.json
 
 CRITICAL GOTCHAS:
 - Camera rotation MUST be (pi/2, 0, -pi/2) for +X facing. +pi/2 renders BLANK.
 - Delete ALL empties after every FBX import (Freestyle crash).
 - Blender 5.0 engine is 'BLENDER_EEVEE' not 'BLENDER_EEVEE_NEXT'.
-- Mma Kick.fbx crashes Freestyle -- avoid entirely.
+- Spring bones run ONCE — never deleted or re-run.
+- Mma Kick.fbx crashes Freestyle — avoid entirely.
 """
 
 import bpy
@@ -53,8 +53,10 @@ _state = {
     'sheet_path': None,
     'gif_path': None,
     'scene_path': None,
-    # Original NLA strip positions (saved before shifting)
-    'strip_positions': {},
+    'scene_start': 1,
+    'scene_end': 1,
+    'selected_frames': [],
+    'expression_map': {},
 }
 
 # Paths
@@ -105,7 +107,7 @@ def load_config(config_path):
 
 
 # ============================================================================
-# Scene setup (imports all FBXes into sequential NLA)
+# Scene setup
 # ============================================================================
 
 def setup_scene(config=None):
@@ -204,8 +206,14 @@ def setup_scene(config=None):
     if armature.animation_data:
         armature.animation_data.action = None
 
+    scene_end = current_frame - 1
+    scene.frame_start = 1
+    scene.frame_end = scene_end
+
     _state['armature'] = armature
     _state['meshes'] = [c for c in armature.children if c.type == 'MESH']
+    _state['scene_start'] = 1
+    _state['scene_end'] = scene_end
 
     for obj in _state['meshes']:
         if obj.data.shape_keys:
@@ -214,10 +222,6 @@ def setup_scene(config=None):
                 _state['face_obj'] = obj
                 break
 
-    # Save original strip positions
-    _save_strip_positions()
-
-    # Setup lighting and render
     _setup_lighting()
     _setup_render_settings()
 
@@ -225,6 +229,7 @@ def setup_scene(config=None):
     for track in armature.animation_data.nla_tracks:
         for strip in track.strips:
             print(f"  {track.name}: frames {strip.frame_start}-{strip.frame_end}")
+    print(f"Scene range: 1-{scene_end}")
     print(f"Face mesh: {_state['face_obj'].name if _state['face_obj'] else 'None'}")
 
     return armature
@@ -254,29 +259,24 @@ def init_from_scene():
                 _state['face_obj'] = obj
                 break
 
-    _save_strip_positions()
+    # Compute scene_end from NLA tracks (excluding spring bones)
+    scene_end = 1
+    for track in arm.animation_data.nla_tracks:
+        if track.name == 'SpringBoneHair':
+            continue
+        for strip in track.strips:
+            scene_end = max(scene_end, int(strip.frame_end))
+
+    _state['scene_start'] = 1
+    _state['scene_end'] = scene_end
 
     print(f"Initialized from scene: armature={arm.name}")
     print(f"  Meshes: {[m.name for m in _state['meshes']]}")
     print(f"  Face: {_state['face_obj'].name if _state['face_obj'] else 'None'}")
+    print(f"  Scene range: 1-{scene_end}")
     for track in arm.animation_data.nla_tracks:
-        if track.name == 'SpringBoneHair':
-            continue
         for strip in track.strips:
             print(f"  NLA: {track.name} frames {strip.frame_start}-{strip.frame_end}")
-
-
-def _save_strip_positions():
-    """Save original NLA strip positions for restore after shifting."""
-    arm = _state['armature']
-    _state['strip_positions'] = {}
-    for track in arm.animation_data.nla_tracks:
-        if track.name == 'SpringBoneHair':
-            continue
-        for strip in track.strips:
-            _state['strip_positions'][track.name] = (
-                strip.frame_start, strip.frame_end
-            )
 
 
 # ============================================================================
@@ -357,12 +357,11 @@ def _setup_render_settings():
 # Camera
 # ============================================================================
 
-def _setup_camera(end_frame, global_bounds=False):
-    """Create orthographic camera with per-frame bounding box keyframes."""
+def _setup_camera_range(start_frame, end_frame, global_bounds=False):
+    """Create/replace orthographic camera with per-frame bounding box keyframes."""
     scene = bpy.context.scene
     meshes = _state['meshes']
 
-    # Delete old camera
     for obj in list(bpy.data.objects):
         if obj.type == 'CAMERA':
             bpy.data.objects.remove(obj, do_unlink=True)
@@ -381,7 +380,7 @@ def _setup_camera(end_frame, global_bounds=False):
         g_min_y, g_max_y = float('inf'), float('-inf')
         frame_y_centers = {}
 
-        for f in range(1, end_frame + 1):
+        for f in range(start_frame, end_frame + 1):
             scene.frame_set(f)
             depsgraph = bpy.context.evaluated_depsgraph_get()
             min_y, max_y = float('inf'), float('-inf')
@@ -409,7 +408,7 @@ def _setup_camera(end_frame, global_bounds=False):
             cam_obj.location = (CAM_DEPTH, cy, center_z)
             cam_obj.keyframe_insert(data_path='location', frame=f)
     else:
-        for f in range(1, end_frame + 1):
+        for f in range(start_frame, end_frame + 1):
             scene.frame_set(f)
             depsgraph = bpy.context.evaluated_depsgraph_get()
             min_y, max_y = float('inf'), float('-inf')
@@ -432,7 +431,13 @@ def _setup_camera(end_frame, global_bounds=False):
             cam_obj.keyframe_insert(data_path='location', frame=f)
             cam_obj.data.keyframe_insert(data_path='ortho_scale', frame=f)
 
-    print(f"  Camera: {end_frame} frames in {time.time()-t:.1f}s")
+    nframes = end_frame - start_frame + 1
+    print(f"  Camera: {nframes} frames ({start_frame}-{end_frame}) in {time.time()-t:.1f}s")
+
+
+def setup_camera(global_bounds=False):
+    """Set up camera for the full sequential NLA timeline."""
+    _setup_camera_range(_state['scene_start'], _state['scene_end'], global_bounds)
 
 
 # ============================================================================
@@ -454,23 +459,22 @@ def _find_hair_chains(arm_obj):
     return chains
 
 
-def _remove_spring_bones():
-    """Remove existing SpringBoneHair NLA track and action."""
+def run_spring_bones(stiffness=SPRING_STIFFNESS, damping=SPRING_DAMPING,
+                     reaction=SPRING_REACTION, max_deg=SPRING_MAX_DEG):
+    """
+    Run spring bone hair physics ONCE across the full sequential NLA timeline.
+    Results are pushed to NLA as ADD blend. Never delete or re-run.
+    Must run AFTER setup_camera().
+    """
     arm = _state['armature']
-    for track in list(arm.animation_data.nla_tracks):
-        if track.name == 'SpringBoneHair':
-            arm.animation_data.nla_tracks.remove(track)
-    if arm.animation_data.action:
-        arm.animation_data.action = None
+    end_frame = _state['scene_end']
 
-
-def _run_spring_bones(end_frame):
-    """Run spring bone simulation for frames 1 to end_frame with fresh state."""
-    arm = _state['armature']
     chains = _find_hair_chains(arm)
     if not chains:
-        print("  Spring bones: skipped (no hair chains)")
+        print("Spring bones: No hair chains found (Mixamo character?). Skipping.")
         return
+
+    print(f"Spring bones: {len(chains)} hair chains, {end_frame} frames")
 
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode='POSE')
@@ -480,7 +484,7 @@ def _run_spring_bones(end_frame):
         bpy.context.scene.frame_set(frame)
         head_pbone = arm.pose.bones.get('J_Bip_C_Head')
         if head_pbone is None:
-            print("  Spring bones: skipped (no J_Bip_C_Head)")
+            print("  Warning: J_Bip_C_Head not found. Skipping spring bones.")
             bpy.ops.object.mode_set(mode='OBJECT')
             return
         world_mat = arm.matrix_world @ head_pbone.matrix
@@ -491,7 +495,7 @@ def _run_spring_bones(end_frame):
         for bone_name in chain:
             state[bone_name] = {'ox': 0.0, 'oz': 0.0, 'vx': 0.0, 'vz': 0.0}
 
-    max_rad = math.radians(SPRING_MAX_DEG)
+    max_rad = math.radians(max_deg)
     prev_quat = head_quats[0]
     t = time.time()
 
@@ -508,10 +512,10 @@ def _run_spring_bones(end_frame):
                 pbone = arm.pose.bones[bone_name]
                 s = state[bone_name]
                 cf = (ci + 1) / len(chain)
-                fx = -delta_euler.x * SPRING_REACTION * cf + -s['ox'] * SPRING_STIFFNESS
-                fz = -delta_euler.z * SPRING_REACTION * cf + -s['oz'] * SPRING_STIFFNESS
-                s['vx'] = s['vx'] * (1.0 - SPRING_DAMPING) + fx
-                s['vz'] = s['vz'] * (1.0 - SPRING_DAMPING) + fz
+                fx = -delta_euler.x * reaction * cf + -s['ox'] * stiffness
+                fz = -delta_euler.z * reaction * cf + -s['oz'] * stiffness
+                s['vx'] = s['vx'] * (1.0 - damping) + fx
+                s['vz'] = s['vz'] * (1.0 - damping) + fz
                 s['ox'] += s['vx']
                 s['oz'] += s['vz']
                 limit = max_rad * cf
@@ -533,12 +537,13 @@ def _run_spring_bones(end_frame):
         strip.frame_end = end_frame
         strip.blend_type = 'ADD'
         arm.animation_data.action = None
+        print(f"  Pushed to NLA: SpringBoneHair (ADD blend)")
 
     print(f"  Spring bones: {len(chains)} chains, {end_frame}f in {time.time()-t:.1f}s")
 
 
 # ============================================================================
-# Frame selection (action frames = scene frames when strip is at frame 1)
+# Frame selection
 # ============================================================================
 
 def _sample_frames(start, end, count):
@@ -549,31 +554,88 @@ def _sample_frames(start, end, count):
     return [round(start + i * step) for i in range(count)]
 
 
-def _select_anim_frames(anim, action_end, reversed=False):
-    """Select frames for one animation. Returns (frames, expr_map)."""
+def select_frames(config=None):
+    """
+    Compute selected frames and expression map from config + NLA offsets.
+    Uses sequential NLA positions (before any shifting).
+    Returns (frames, expression_map).
+    """
+    if config is None:
+        config = _state['config']
+
+    arm = _state['armature']
+    nla_tracks = arm.animation_data.nla_tracks
+
+    all_frames = []
+    expr_map = {}
+
+    for anim in config['animations']:
+        track = nla_tracks.get(anim['name'])
+        if track is None:
+            raise RuntimeError(f"NLA track '{anim['name']}' not found")
+        strip = track.strips[0]
+        offset = strip.frame_start - strip.action_frame_start
+
+        if 'segments' in anim:
+            for seg in anim['segments']:
+                action_start = seg['action_frames'][0]
+                action_end = seg['action_frames'][1]
+                scene_start = action_start + offset
+                scene_end = action_end + offset
+                pick = seg.get('pick', 1)
+                expression = seg.get('expression', None)
+                frames = _sample_frames(int(scene_start), int(scene_end), pick)
+                for f in frames:
+                    all_frames.append(f)
+                    expr_map[f] = expression
+        else:
+            scene_start = int(strip.frame_start)
+            scene_end = int(strip.frame_end)
+            frames = _sample_frames(scene_start, scene_end, anim['frames'])
+            for f in frames:
+                all_frames.append(f)
+                expr_map[f] = None
+
+    if len(all_frames) != 16:
+        print(f"WARNING: Expected 16 frames, got {len(all_frames)}")
+
+    _state['selected_frames'] = all_frames
+    _state['expression_map'] = expr_map
+
+    print(f"\n--- Frame Selection ({len(all_frames)} frames) ---")
+    for i, f in enumerate(all_frames):
+        expr = expr_map.get(f)
+        expr_str = f" [{expr}]" if expr else ""
+        print(f"  Frame {i+1:2d}: scene={f}{expr_str}")
+
+    return all_frames, expr_map
+
+
+def _select_shifted_frames(anim, strip):
+    """
+    Compute selected frames for a shifted animation strip.
+    Returns (frames, expr_map) using the strip's current (shifted) position.
+    """
+    offset = strip.frame_start - strip.action_frame_start
     frames = []
     expr_map = {}
 
     if 'segments' in anim:
         for seg in anim['segments']:
-            a_start = seg['action_frames'][0]
-            a_end = seg['action_frames'][1]
+            action_start = seg['action_frames'][0]
+            action_end = seg['action_frames'][1]
+            scene_start = action_start + offset
+            scene_end = action_end + offset
             pick = seg.get('pick', 1)
             expression = seg.get('expression', None)
-
-            if reversed:
-                s_start = action_end - a_end + 1
-                s_end = action_end - a_start + 1
-            else:
-                s_start = a_start
-                s_end = a_end
-
-            picked = _sample_frames(s_start, s_end, pick)
+            picked = _sample_frames(int(scene_start), int(scene_end), pick)
             for f in picked:
                 frames.append(f)
                 expr_map[f] = expression
     else:
-        frames = _sample_frames(1, action_end, anim['frames'])
+        scene_start = int(strip.frame_start)
+        scene_end = int(strip.frame_end)
+        frames = _sample_frames(scene_start, scene_end, anim['frames'])
         expr_map = {f: None for f in frames}
 
     return frames, expr_map
@@ -607,46 +669,77 @@ def _set_expression(expression_name):
 
 
 # ============================================================================
-# Per-animation render
+# Rendering
 # ============================================================================
 
-def render_animation(anim_index):
+def render_normal(start=0, end=4):
     """
-    Render one animation by muting others and shifting its strip to frame 1.
-    The character stays on the same armature (imported once via setup_scene).
-    Spring bones run fresh per animation. Action frames = scene frames.
+    Render frames from the sequential NLA timeline (no muting/shifting).
+    Uses pre-computed selected_frames and expression_map from select_frames().
 
-    Call sequentially: render_animation(0), render_animation(1), ...
-    Each call is self-contained (re-exec safe for MCP).
+    Args:
+        start: Index into selected_frames (inclusive)
+        end: Index into selected_frames (exclusive)
     """
-    config = _state['config']
-    if config is None:
-        raise ValueError("No config loaded. Call load_config() first.")
+    frames = _state['selected_frames']
+    expr_map = _state['expression_map']
 
-    arm = _state['armature']
-    if arm is None:
-        raise ValueError("No armature. Call setup_scene() or init_from_scene() first.")
-
-    anim = config['animations'][anim_index]
-    reversed = anim.get('reversed', False)
-
-    # Compute frame cursor from previous animations
-    cursor = sum(a['frames'] for a in config['animations'][:anim_index])
-
-    print(f"\n{'='*50}")
-    print(f"Animation {anim_index}: {anim['name']}")
-    print(f"  Sprite frames {cursor+1}-{cursor+anim['frames']}")
-    print(f"{'='*50}")
-
-    # Clean output dir on first animation
     out_dir = _state['out_dir']
     os.makedirs(out_dir, exist_ok=True)
-    if anim_index == 0:
+
+    if start == 0:
         for f in os.listdir(out_dir):
             if f.startswith('frame_') and f.endswith('.png'):
                 os.remove(os.path.join(out_dir, f))
 
-    # --- Mute all tracks except this one ---
+    scene = bpy.context.scene
+    batch_frames = frames[start:end]
+
+    for i, frame in enumerate(batch_frames):
+        idx = start + i
+        scene.frame_set(frame)
+        expression = expr_map.get(frame)
+        _set_expression(expression)
+
+        fname = f"frame_{idx+1:02d}_{frame:03d}.png"
+        scene.render.filepath = os.path.join(out_dir, fname)
+        bpy.ops.render.render(write_still=True)
+
+        expr_str = f" [{expression}]" if expression else ""
+        print(f"  Rendered {fname}{expr_str}")
+
+    print(f"render_normal({start}, {end}) done")
+
+
+def render_shifted(anim_index):
+    """
+    Render one animation by muting others, shifting its strip to frame 1,
+    and using the EXISTING spring bone keyframes (no re-run).
+
+    Steps:
+    1. Mute all animation tracks except target (keep SpringBoneHair unmuted)
+    2. Shift target strip to frame 1
+    3. Compute selected frames with new offset
+    4. Re-setup camera for shifted frame range
+    5. Render
+    6. Restore strip position and unmute all tracks
+    """
+    config = _state['config']
+    arm = _state['armature']
+    anim = config['animations'][anim_index]
+
+    # Sprite frame cursor: sum of frames from all previous animations
+    cursor = sum(a['frames'] for a in config['animations'][:anim_index])
+
+    print(f"\n{'='*50}")
+    print(f"render_shifted: {anim['name']} (anim {anim_index})")
+    print(f"  Sprite frames {cursor+1}-{cursor+anim['frames']}")
+    print(f"{'='*50}")
+
+    out_dir = _state['out_dir']
+    os.makedirs(out_dir, exist_ok=True)
+
+    # --- Mute all animation tracks except target ---
     target_track = None
     for track in arm.animation_data.nla_tracks:
         if track.name == 'SpringBoneHair':
@@ -660,9 +753,6 @@ def render_animation(anim_index):
     if target_track is None:
         raise RuntimeError(f"NLA track '{anim['name']}' not found")
 
-    # --- Remove old spring bones ---
-    _remove_spring_bones()
-
     # --- Shift strip to frame 1 ---
     strip = target_track.strips[0]
     orig_start = strip.frame_start
@@ -670,23 +760,17 @@ def render_animation(anim_index):
     duration = orig_end - orig_start
     strip.frame_start = 1
     strip.frame_end = 1 + duration
-    action_end = int(strip.frame_end)
+    shifted_end = int(strip.frame_end)
 
-    print(f"  Shifted {anim['name']}: {orig_start}-{orig_end} -> 1-{action_end}")
+    print(f"  Shifted {anim['name']}: {orig_start}-{orig_end} -> 1-{shifted_end}")
 
-    # --- Set scene range ---
-    bpy.context.scene.frame_start = 1
-    bpy.context.scene.frame_end = action_end
-
-    # --- Camera ---
-    _setup_camera(action_end, global_bounds=config.get('global_camera', False))
-
-    # --- Spring bones (fresh) ---
-    _run_spring_bones(action_end)
-
-    # --- Select frames ---
-    frames, expr_map = _select_anim_frames(anim, action_end, reversed=reversed)
+    # --- Compute selected frames with new offset ---
+    frames, expr_map = _select_shifted_frames(anim, strip)
     print(f"  Frames: {frames}")
+
+    # --- Re-setup camera for shifted animation range ---
+    _setup_camera_range(1, shifted_end,
+                        global_bounds=config.get('global_camera', False))
 
     # --- Render ---
     scene = bpy.context.scene
@@ -710,9 +794,6 @@ def render_animation(anim_index):
     # --- Unmute all ---
     for track in arm.animation_data.nla_tracks:
         track.mute = False
-
-    # --- Remove spring bones (will be wrong after restore) ---
-    _remove_spring_bones()
 
     print(f"  Done ({anim['frames']} frames, strip restored to {orig_start}-{orig_end})")
 
@@ -932,31 +1013,27 @@ def save_scene(filepath=None):
 def run_full_pipeline(config_path):
     """Run the complete pipeline from config to finished sprite sheet."""
     print("=" * 60)
-    print("SPRITE SHEET RENDER PIPELINE (Per-Animation)")
+    print("SPRITE SHEET RENDER PIPELINE (Hybrid)")
     print("=" * 60)
 
     config = load_config(config_path)
     setup_scene(config)
+    setup_camera(global_bounds=config.get('global_camera', False))
+    run_spring_bones()
+    frames, expr_map = select_frames(config)
 
-    for i in range(len(config['animations'])):
-        render_animation(i)
+    for batch_start in range(0, len(frames), 4):
+        batch_end = min(batch_start + 4, len(frames))
+        render_normal(batch_start, batch_end)
 
     assemble_sheet()
     create_gif()
     save_scene()
 
-    # Update config with selected frames
-    out_dir = _state['out_dir']
-    frame_files = sorted([f for f in os.listdir(out_dir)
-                         if f.startswith('frame_') and f.endswith('.png')])
-    selected = []
-    for fname in frame_files:
-        parts = fname.replace('.png', '').split('_')
-        selected.append(int(parts[2]))
-    config['selected_frames'] = selected
+    config['selected_frames'] = frames
     with open(_state['config_path'], 'w') as f:
         json.dump(config, f, indent=4)
-    print(f"Config updated with selected_frames: {selected}")
+    print(f"Config updated with selected_frames")
 
     print("\n" + "=" * 60)
     print("PIPELINE COMPLETE")
@@ -979,5 +1056,6 @@ if __name__ == "__main__":
         else:
             print("Usage: blender --background --python render_sheet_indv.py -- config.json")
     else:
-        print("render_sheet_indv.py loaded. Call functions manually via MCP.")
-        print("  load_config(path) -> init_from_scene() -> render_animation(0) -> ...")
+        print("render_sheet_indv.py loaded (hybrid mode). Call functions manually via MCP.")
+        print("  load_config(path) -> init_from_scene() -> run_spring_bones()")
+        print("  -> render_normal(0, 12) -> render_shifted(3) -> assemble_sheet()")

@@ -1,0 +1,176 @@
+{
+    "name": "Fall + Get Up",
+    "sheet_index": 8,
+    "prompt": "A 4x4 sprite sheet of a character falling backwards to the ground and then getting back up to standing position.",
+    "global_camera": true,
+    "animations": [
+        {
+            "name": "Falling Back Death",
+            "fbx": "Falling Back Death.fbx",
+            "frames": 8,
+            "reversed": false,
+            "description": "Character falls backward to the ground",
+            "segments": [
+                {
+                    "action_frames": [
+                        1,
+                        4
+                    ],
+                    "pick": 1,
+                    "description": "Start of fall"
+                },
+                {
+                    "action_frames": [
+                        5,
+                        6
+                    ],
+                    "pick": 1,
+                    "description": "Leaning back"
+                },
+                {
+                    "action_frames": [
+                        7,
+                        7
+                    ],
+                    "pick": 1,
+                    "description": "Mid-fall"
+                },
+                {
+                    "action_frames": [
+                        8,
+                        12
+                    ],
+                    "pick": 1,
+                    "description": "Falling"
+                },
+                {
+                    "action_frames": [
+                        13,
+                        16
+                    ],
+                    "pick": 1,
+                    "description": "Near ground"
+                },
+                {
+                    "action_frames": [
+                        17,
+                        20
+                    ],
+                    "pick": 1,
+                    "description": "Impact"
+                },
+                {
+                    "action_frames": [
+                        21,
+                        27
+                    ],
+                    "pick": 1,
+                    "description": "Settling"
+                },
+                {
+                    "action_frames": [
+                        28,
+                        36
+                    ],
+                    "pick": 1,
+                    "description": "On ground"
+                }
+            ]
+        },
+        {
+            "name": "Getting Up",
+            "fbx": "Getting Up.fbx",
+            "frames": 8,
+            "reversed": false,
+            "description": "Character gets back up from the ground to standing",
+            "segments": [
+                {
+                    "action_frames": [
+                        12,
+                        12
+                    ],
+                    "pick": 1,
+                    "description": "On ground"
+                },
+                {
+                    "action_frames": [
+                        79,
+                        79
+                    ],
+                    "pick": 1,
+                    "description": "Start rising"
+                },
+                {
+                    "action_frames": [
+                        83,
+                        86
+                    ],
+                    "pick": 1,
+                    "description": "Pushing up"
+                },
+                {
+                    "action_frames": [
+                        87,
+                        93
+                    ],
+                    "pick": 1,
+                    "description": "Halfway up"
+                },
+                {
+                    "action_frames": [
+                        94,
+                        103
+                    ],
+                    "pick": 1,
+                    "description": "Rising"
+                },
+                {
+                    "action_frames": [
+                        115,
+                        122
+                    ],
+                    "pick": 1,
+                    "description": "Nearly up"
+                },
+                {
+                    "action_frames": [
+                        126,
+                        132
+                    ],
+                    "pick": 1,
+                    "description": "Standing"
+                },
+                {
+                    "action_frames": [
+                        134,
+                        141
+                    ],
+                    "pick": 1,
+                    "description": "Recovery stance"
+                }
+            ]
+        }
+    ],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256",
+    "selected_frames": [
+        2,
+        6,
+        7,
+        10,
+        14,
+        18,
+        24,
+        32,
+        118,
+        185,
+        190,
+        196,
+        204,
+        224,
+        235,
+        244
+    ]
+}

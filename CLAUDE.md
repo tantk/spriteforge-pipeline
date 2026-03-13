@@ -19,12 +19,9 @@
 - Final sprite sheets go to `data/renders/sheet_XX_name.png` and `.gif`
 - Per-frame render subdirs go to `data/renders/sheet_XX/` (gitignored)
 
-## Blender MCP (Multi-Port Setup)
+## Blender MCP
 
-- Up to 4 worktrees can connect to Blender simultaneously on ports **9871–9874**
-- Uses a forked `blender-mcp` from `github.com/tantk/blender-mcp` with a `connect_to_blender` tool
-- **On session start**: read your worktree's `.blender_port` file and call `connect_to_blender(port=<port>)` to connect to the correct Blender instance
-- Port assignments: worktree one=9871, two=9872, three=9873, four=9874
+- Each worktree's `.mcp.json` sets `BLENDER_PORT` to connect to the correct Blender instance (ports 9871–9874). The MCP server connects at startup automatically.
 - The Blender addon (`blender_mcp_addon.py`) rejects second connections to the same instance
 - **Blender side**: each instance must have a unique port set in N-panel > BlenderMCP, with "Connect to MCP server" clicked
 - **Check your port**: call `get_scene_info` — the `port` field in the response shows which Blender instance you're connected to

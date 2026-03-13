@@ -1,6 +1,7 @@
 {
     "name": "Hook + Right Hook",
     "sheet_index": 4,
+    "scene": "sheet_04_hookrighthook.blend",
     "prompt": "A 4x4 sprite sheet of a character performing a hook punch with body rotation through wind-up, strike, and follow-through, then a quick stationary right hook with wind-up, strike, and recovery.",
     "animations": [
         {
@@ -8,17 +9,36 @@
             "fbx": "Hook.fbx",
             "frames": 8,
             "reversed": false,
-            "description": "Hook punch with body rotation"
+            "description": "Hook punch with body rotation",
+            "segments": [
+                {"action_frames": [4, 9], "pick": 1},
+                {"action_frames": [10, 13], "pick": 1},
+                {"action_frames": [16, 18], "pick": 1},
+                {"action_frames": [21, 23], "pick": 1, "expression": "surprised"},
+                {"action_frames": [25, 25], "pick": 1, "expression": "surprised"},
+                {"action_frames": [26, 30], "pick": 1, "expression": "surprised"},
+                {"action_frames": [28, 31], "pick": 1, "expression": "surprised"},
+                {"action_frames": [32, 37], "pick": 1}
+            ]
         },
         {
             "name": "Right Hook",
             "fbx": "Right Hook.fbx",
             "frames": 8,
             "reversed": false,
-            "description": "Quick stationary right hook"
+            "description": "Quick stationary right hook",
+            "segments": [
+                {"action_frames": [4, 6], "pick": 1},
+                {"action_frames": [7, 7], "pick": 1},
+                {"action_frames": [8, 8], "pick": 1},
+                {"action_frames": [9, 9], "pick": 1},
+                {"action_frames": [10, 10], "pick": 1},
+                {"action_frames": [11, 13], "pick": 1},
+                {"action_frames": [14, 17], "pick": 1},
+                {"action_frames": [18, 21], "pick": 1}
+            ]
         }
     ],
-    "selected_frames": [1, 9, 17, 25, 33, 41, 49, 57, 61, 65, 68, 72, 75, 79, 82, 86],
     "total_frames": 16,
     "grid": "4x4",
     "resolution": "1024x1024",

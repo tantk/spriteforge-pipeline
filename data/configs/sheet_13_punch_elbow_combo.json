@@ -1,0 +1,40 @@
+{
+    "name": "Punch Elbow Combo",
+    "sheet_index": 13,
+    "scene": "sheet_13_punch_elbow_combo.blend",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
+    "camera_ortho_scale": 1.67,
+    "prompt": "A 4x4 sprite sheet of a character performing a fast punch to elbow combo. Opens with a fighting stance into a left jab, follows with a deep lunge double punch, then pulls back for a right cross. Transitions into an upward elbow strike with body rotation, a spinning back elbow, then resets to guard. The second half shows rapid single-frame strikes: quick jabs, hooks, and elbow snaps with tight turns, finishing with a wide recovery step back to fighting stance.",
+    "animations": [
+        {
+            "name": "Punch To Elbow Combo",
+            "fbx": "Punch To Elbow Combo.fbx",
+            "frames": 16,
+            "reversed": false,
+            "description": "Punch transitioning into elbow strikes",
+            "segments": [
+                {"action_frames": [8, 13], "pick": 1},
+                {"action_frames": [14, 18], "pick": 1},
+                {"action_frames": [19, 22], "pick": 1},
+                {"action_frames": [24, 26], "pick": 1},
+                {"action_frames": [29, 31], "pick": 1},
+                {"action_frames": [41, 45], "pick": 1},
+                {"action_frames": [49, 51], "pick": 1},
+                {"action_frames": [53, 53], "pick": 1},
+                {"action_frames": [57, 57], "pick": 1},
+                {"action_frames": [61, 61], "pick": 1},
+                {"action_frames": [71, 71], "pick": 1},
+                {"action_frames": [73, 73], "pick": 1},
+                {"action_frames": [78, 78], "pick": 1},
+                {"action_frames": [82, 82], "pick": 1},
+                {"action_frames": [89, 89], "pick": 1},
+                {"action_frames": [99, 99], "pick": 1}
+            ]
+        }
+    ],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

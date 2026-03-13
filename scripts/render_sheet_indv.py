@@ -252,6 +252,16 @@ def init_from_scene():
     _state['meshes'] = [c for c in arm.children if c.type == 'MESH']
     _state['face_obj'] = None
 
+    # Hide debug objects (trackers, reference lines) from render
+    hidden = []
+    for obj in bpy.data.objects:
+        if obj.name.endswith('Tracker') or obj.name == 'ReferenceLine':
+            obj.hide_render = True
+            obj.hide_viewport = True
+            hidden.append(obj.name)
+    if hidden:
+        print(f"  Hidden from render: {hidden}")
+
     for obj in _state['meshes']:
         if obj.data.shape_keys:
             keys = [k.name for k in obj.data.shape_keys.key_blocks]

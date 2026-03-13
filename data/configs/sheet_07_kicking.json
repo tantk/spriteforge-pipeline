@@ -1,6 +1,7 @@
 {
     "name": "Kicking",
     "sheet_index": 7,
+    "scene": "sheet_07_kicking.blend",
     "prompt": "A 4x4 sprite sheet of a character performing a spinning mid-air kick from a three-quarter view. Starting from fighting stance, stepping forward and winding up, turning her back to the camera while chambering the knee, launching a spinning kick with full leg extension in mid-air with a surprised expression, then landing and recovering back to fighting stance.",
     "animations": [
         {

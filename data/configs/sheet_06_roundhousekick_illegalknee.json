@@ -1,6 +1,7 @@
 {
     "name": "Illegal Knee + Roundhouse Kick",
     "sheet_index": 6,
+    "scene": "sheet_06_roundhousekick_illegalknee.blend",
     "prompt": "A 4x4 sprite sheet of a character performing an illegal knee strike with knee driving upward with a shouting expression on impact, then a spinning roundhouse kick with full body rotation through wind-up, leg extension with shouting expression on impact, and follow-through.",
     "animations": [
         {

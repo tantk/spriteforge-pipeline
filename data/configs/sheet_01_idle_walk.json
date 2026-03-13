@@ -1,6 +1,7 @@
 {
     "name": "Idle + Walk",
     "sheet_index": 1,
+    "scene": "sheet_01_idle_walk.blend",
     "prompt": "A 4x4 sprite sheet of a character in fighting idle stance with fists raised, then walking forward with left foot stepping out, extending into full stride, shifting weight to right foot, and completing the step cycle, then walking backward through the same phases in reverse.",
     "animations": [
         {

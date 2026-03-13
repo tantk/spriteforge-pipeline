@@ -1,6 +1,7 @@
 {
     "name": "Left Right Kick",
     "sheet_index": 11,
+    "scene": "sheet_11_left_right_kick.blend",
     "prompt": "A 4x4 sprite sheet of a character performing a left-right kick combo from a three-quarter view. First half: a capoeira martelo roundhouse kick with the left leg, chambering the knee, extending the leg with a surprised expression at full extension, then recovering. Second half: a mirrored bencao push kick with the right leg forward, stepping in, thrusting the foot forward with a surprised expression, then pulling back to stance.",
     "animations": [
         {

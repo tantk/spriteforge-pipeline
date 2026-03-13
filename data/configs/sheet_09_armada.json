@@ -1,6 +1,10 @@
 {
     "name": "Armada",
     "sheet_index": 9,
+    "scene": "sheet_09_armada.blend",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
+    "camera_ortho_scale": 1.67,
     "prompt": "A 4x4 sprite sheet of a character performing a capoeira armada spinning kick from a three-quarter view. Starting from fighting stance, winding up and turning, spinning with her back to the camera while the kicking leg sweeps around with a surprised expression during the kick's apex, then following through and recovering back to stance.",
     "animations": [
         {

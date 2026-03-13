@@ -165,12 +165,87 @@
             ],
             "selected_frames": [1, 6, 12, 17, 23, 28, 33, 39, 44, 50, 55, 60, 66, 71, 77, 82],
             "status": "rendered"
+        },
+        {
+            "id": "sheet_08",
+            "name": "Fall + Get Up",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "pipeline_notes": "Global camera, segment-based frame selection",
+            "config": "configs/sheet_08_fall_getup.json",
+            "scene": "scenes/sheet_08_fall_getup.blend",
+            "output": {
+                "spritesheet": "renders/sheet_08_fall_getup.png",
+                "gif": "renders/sheet_08_fall_getup.gif",
+                "frames_dir": "renders/sheet_08/"
+            },
+            "animations": [
+                {"name": "Falling Back Death", "fbx": "animations/Falling Back Death.fbx", "frames": 8, "reversed": false},
+                {"name": "Getting Up", "fbx": "animations/Getting Up.fbx", "frames": 8, "reversed": false}
+            ],
+            "selected_frames": [2, 6, 7, 10, 14, 18, 24, 32, 118, 185, 190, 196, 204, 224, 235, 244],
+            "status": "rendered"
+        },
+        {
+            "id": "sheet_09",
+            "name": "Armada",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "pipeline_notes": "Segment-based frame selection, surprised expression on kick apex",
+            "config": "configs/sheet_09_armada.json",
+            "scene": "scenes/sheet_09_armada.blend",
+            "output": {
+                "spritesheet": "renders/sheet_09_armada.png",
+                "gif": "renders/sheet_09_armada.gif",
+                "frames_dir": "renders/sheet_09/"
+            },
+            "animations": [
+                {"name": "Armada", "fbx": "animations/Armada.fbx", "frames": 16, "reversed": false}
+            ],
+            "status": "rendered"
+        },
+        {
+            "id": "sheet_10",
+            "name": "Hit & Block",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "pipeline_notes": "4 animations x 4 frames each, surprised expression on impact frames",
+            "config": "configs/sheet_10_hit_block.json",
+            "scene": "scenes/sheet_10_hit_block.blend",
+            "output": {
+                "spritesheet": "renders/sheet_10_hit_block.png",
+                "gif": "renders/sheet_10_hit_block.gif",
+                "frames_dir": "renders/sheet_10/"
+            },
+            "animations": [
+                {"name": "Head Hit", "fbx": "animations/Head Hit.fbx", "frames": 4, "reversed": false},
+                {"name": "Medium Hit To Head", "fbx": "animations/Medium Hit To Head.fbx", "frames": 4, "reversed": false},
+                {"name": "Stomach Hit", "fbx": "animations/Stomach Hit.fbx", "frames": 4, "reversed": false},
+                {"name": "Block", "fbx": "animations/Block.fbx", "frames": 4, "reversed": false}
+            ],
+            "selected_frames": [2, 6, 8, 12, 2, 6, 10, 14, 3, 8, 12, 16, 39, 42, 45, 48],
+            "status": "rendered"
+        },
+        {
+            "id": "sheet_11",
+            "name": "Left Right Kick",
+            "character": "AvatarSample_B",
+            "pipeline": "complex",
+            "pipeline_notes": "Martelo 2 + mirrored Bencao, segment-based frame selection",
+            "config": "configs/sheet_11_left_right_kick.json",
+            "scene": "scenes/sheet_11_left_right_kick.blend",
+            "output": {
+                "spritesheet": "renders/sheet_11_left_right_kick.png",
+                "gif": "renders/sheet_11_left_right_kick.gif",
+                "frames_dir": "renders/sheet_11/"
+            },
+            "animations": [
+                {"name": "Martelo 2", "fbx": "animations/Martelo 2.fbx", "frames": 8, "reversed": false},
+                {"name": "Bencao", "fbx": "animations/Bencao.fbx", "frames": 8, "reversed": false, "mirror": true}
+            ],
+            "status": "rendered"
         }
     ],
 
-    "planned_sheets": [
-        {"id": "sheet_08", "theme": "Hit Reactions", "candidates": ["Head Hit", "Hit To Body", "Stomach Hit", "Reaction"]},
-        {"id": "sheet_09", "theme": "Death/Recovery", "candidates": ["Dying", "Falling Back Death", "Defeated", "Getting Up"]},
-        {"id": "sheet_10", "theme": "Movement", "candidates": ["Jump", "Long Step Forward", "Sprinting Forward Roll"]}
-    ]
+    "planned_sheets": []
 }

@@ -1057,11 +1057,13 @@ def _setup_hybrid_camera(config):
 
     ref_frame = config.get('camera_reference_frame')
     ortho_override = config.get('camera_ortho_scale')
+    rotations = config.get('camera_rotations')
 
     camera_hybrid.setup_camera_hybrid(
         _state,
         reference_frame=ref_frame,
         ortho_scale_override=ortho_override,
+        camera_rotations=rotations,
     )
 
 

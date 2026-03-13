@@ -6,6 +6,22 @@
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "camera_ortho_scale": 1.657,
+    "camera_rotations": [
+        {
+            "frames": [
+                1,
+                7
+            ],
+            "z_degrees": 170
+        },
+        {
+            "frames": [
+                8,
+                253
+            ],
+            "z_degrees": -90
+        }
+    ],
     "animations": [
         {
             "name": "Falling Back Death",

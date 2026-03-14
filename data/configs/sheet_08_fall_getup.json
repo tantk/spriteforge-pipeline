@@ -1,11 +1,29 @@
 {
     "name": "Fall + Get Up",
     "sheet_index": 8,
-    "prompt": "A 4x4 sprite sheet of a character falling backwards to the ground and then getting back up to standing position.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter staggering backward and falling to the ground, lying flat, then pushing up and recovering to standing position",
     "scene": "sheet_08_fall_getup.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "camera_ortho_scale": 1.657,
+    "armature_z_override": [
+        {
+            "frame": 1,
+            "z_degrees": 225
+        },
+        {
+            "frame": 8,
+            "z_degrees": 0
+        },
+        {
+            "frame": 180,
+            "z_degrees": -20
+        },
+        {
+            "frame": 186,
+            "z_degrees": -40
+        }
+    ],
     "camera_rotations": [
         {
             "frames": [

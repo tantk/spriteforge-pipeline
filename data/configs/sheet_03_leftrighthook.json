@@ -4,7 +4,7 @@
     "scene": "sheet_03_leftrighthook.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
-    "prompt": "A 4x4 sprite sheet of a character performing a left hook with left foot stepping forward through wind-up, strike, and follow-through, then a stationary right hook punch with wind-up, strike, and recovery.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter winding up a left hook punch and striking, then winding up a right hook punch and striking",
     "animations": [
         {
             "name": "Hook (1)",
@@ -13,14 +13,66 @@
             "reversed": false,
             "description": "Left hook with left foot stepping forward",
             "segments": [
-                {"action_frames": [0, 7], "pick": 1},
-                {"action_frames": [8, 9], "pick": 1, "expression": "surprised"},
-                {"action_frames": [10, 11], "pick": 1, "expression": "surprised"},
-                {"action_frames": [12, 12], "pick": 1, "expression": "surprised"},
-                {"action_frames": [13, 13], "pick": 1, "expression": "surprised"},
-                {"action_frames": [14, 15], "pick": 1},
-                {"action_frames": [16, 19], "pick": 1},
-                {"action_frames": [20, 25], "pick": 1}
+                {
+                    "action_frames": [
+                        1,
+                        7
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        8,
+                        9
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        10,
+                        11
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        12,
+                        12
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        13,
+                        13
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        14,
+                        15
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        16,
+                        19
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        20,
+                        25
+                    ],
+                    "pick": 1
+                }
             ]
         },
         {
@@ -30,14 +82,65 @@
             "reversed": false,
             "description": "Stationary right hook punch",
             "segments": [
-                {"action_frames": [3, 9], "pick": 1},
-                {"action_frames": [10, 12], "pick": 1},
-                {"action_frames": [13, 15], "pick": 1},
-                {"action_frames": [16, 20], "pick": 1, "expression": "surprised"},
-                {"action_frames": [21, 24], "pick": 1, "expression": "surprised"},
-                {"action_frames": [30, 31], "pick": 1, "expression": "surprised"},
-                {"action_frames": [34, 37], "pick": 1},
-                {"action_frames": [38, 44], "pick": 1}
+                {
+                    "action_frames": [
+                        3,
+                        9
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        10,
+                        12
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        13,
+                        15
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        16,
+                        20
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        21,
+                        24
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        30,
+                        31
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        34,
+                        37
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        38,
+                        44
+                    ],
+                    "pick": 1
+                }
             ]
         }
     ],

@@ -5,7 +5,7 @@
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "camera_ortho_scale": 1.67,
-    "prompt": "A 4x4 sprite sheet of a character performing a left-right kick combo from a three-quarter view. First half: a capoeira martelo roundhouse kick with the left leg, chambering the knee, extending the leg with a surprised expression at full extension, then recovering. Second half: a mirrored bencao push kick with the right leg forward, stepping in, thrusting the foot forward with a surprised expression, then pulling back to stance.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter chambering left leg into a roundhouse kick at full extension then recovering, then stepping into a right push kick and pulling back",
     "animations": [
         {
             "name": "Martelo 2",
@@ -14,14 +14,65 @@
             "reversed": false,
             "description": "Capoeira martelo kick with left leg",
             "segments": [
-                {"action_frames": [1, 4], "pick": 1},
-                {"action_frames": [5, 7], "pick": 1},
-                {"action_frames": [8, 9], "pick": 1, "expression": "surprised"},
-                {"action_frames": [10, 10], "pick": 1, "expression": "surprised"},
-                {"action_frames": [11, 17], "pick": 1, "expression": "surprised"},
-                {"action_frames": [18, 20], "pick": 1},
-                {"action_frames": [21, 24], "pick": 1},
-                {"action_frames": [25, 27], "pick": 1}
+                {
+                    "action_frames": [
+                        1,
+                        4
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        5,
+                        7
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        8,
+                        9
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        10,
+                        10
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        11,
+                        17
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        18,
+                        20
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        21,
+                        24
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        25,
+                        27
+                    ],
+                    "pick": 1
+                }
             ]
         },
         {
@@ -32,14 +83,65 @@
             "mirror": true,
             "description": "Capoeira bencao kick mirrored (right leg forward)",
             "segments": [
-                {"action_frames": [1, 4], "pick": 1},
-                {"action_frames": [5, 8], "pick": 1},
-                {"action_frames": [9, 10], "pick": 1},
-                {"action_frames": [11, 12], "pick": 1, "expression": "surprised"},
-                {"action_frames": [13, 15], "pick": 1, "expression": "surprised"},
-                {"action_frames": [16, 20], "pick": 1, "expression": "surprised"},
-                {"action_frames": [21, 24], "pick": 1},
-                {"action_frames": [25, 29], "pick": 1}
+                {
+                    "action_frames": [
+                        1,
+                        4
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        5,
+                        8
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        9,
+                        10
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        11,
+                        12
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        13,
+                        15
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        16,
+                        20
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        21,
+                        24
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        25,
+                        29
+                    ],
+                    "pick": 1
+                }
             ]
         }
     ],

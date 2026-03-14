@@ -4,7 +4,7 @@
     "scene": "sheet_05_quadpunch.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
-    "prompt": "A 4x4 sprite sheet of a character in guard stance, then performing four rapid alternating punches: left jab forward, right cross, left hook, right hook, then recovering to idle stance.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter starting in guard stance, throwing four rapid alternating punches left-right-left-right, then recovering to stance",
     "animations": [
         {
             "name": "Quad Punch",
@@ -12,12 +12,54 @@
             "frames": 16,
             "reversed": false,
             "segments": [
-                {"action_frames": [1, 8], "pick": 2, "description": "Guard stance, preparing to punch"},
-                {"action_frames": [9, 13], "pick": 3, "description": "Left jab forward"},
-                {"action_frames": [15, 19], "pick": 3, "description": "Right cross"},
-                {"action_frames": [20, 24], "pick": 3, "description": "Left hook"},
-                {"action_frames": [25, 30], "pick": 3, "description": "Right hook"},
-                {"action_frames": [31, 53], "pick": 2, "description": "Recovery to idle stance"}
+                {
+                    "action_frames": [
+                        1,
+                        8
+                    ],
+                    "pick": 2,
+                    "description": "Guard stance, preparing to punch"
+                },
+                {
+                    "action_frames": [
+                        9,
+                        13
+                    ],
+                    "pick": 3,
+                    "description": "Left jab forward"
+                },
+                {
+                    "action_frames": [
+                        15,
+                        19
+                    ],
+                    "pick": 3,
+                    "description": "Right cross"
+                },
+                {
+                    "action_frames": [
+                        20,
+                        24
+                    ],
+                    "pick": 3,
+                    "description": "Left hook"
+                },
+                {
+                    "action_frames": [
+                        25,
+                        30
+                    ],
+                    "pick": 3,
+                    "description": "Right hook"
+                },
+                {
+                    "action_frames": [
+                        31,
+                        53
+                    ],
+                    "pick": 2,
+                    "description": "Recovery to idle stance"
+                }
             ]
         }
     ],

@@ -3,8 +3,8 @@
     "sheet_index": 10,
     "scene": "sheet_10_hit_block.blend",
     "render_script": "render_sheet_indv.py",
-    "render_note": "All 4 animations play together in sequential NLA and spring bones run once across the full timeline. The first 3 (Head Hit, Medium Hit, Stomach Hit) render normally from their NLA positions. Block has hair_reset — at render time only, its NLA strip is shifted to frame 1 so the rendered frames show hair at rest, not hair carrying momentum from the 3 preceding hit animations.",
-    "prompt": "A 4x4 sprite sheet of a character being hit and blocking attacks. Row 1: head hit reaction with surprised expression during impact. Row 2: medium hit to the head with surprised expression during impact. Row 3: stomach hit reaction with surprised expression during impact. Row 4: blocking stance with arms raised to deflect.",
+    "render_note": "All 4 animations play together in sequential NLA and spring bones run once across the full timeline. The first 3 (Head Hit, Medium Hit, Stomach Hit) render normally from their NLA positions. Block has hair_reset \u2014 at render time only, its NLA strip is shifted to frame 1 so the rendered frames show hair at rest, not hair carrying momentum from the 3 preceding hit animations.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter reacting to a head hit, reacting to a body hit, taking a stomach hit, then raising arms in a blocking stance",
     "animations": [
         {
             "name": "Head Hit",
@@ -13,10 +13,36 @@
             "reversed": false,
             "description": "Head hit reaction",
             "segments": [
-                {"action_frames": [1, 4], "pick": 1},
-                {"action_frames": [5, 7], "pick": 1, "expression": "surprised"},
-                {"action_frames": [8, 9], "pick": 1, "expression": "surprised"},
-                {"action_frames": [10, 14], "pick": 1}
+                {
+                    "action_frames": [
+                        1,
+                        4
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        5,
+                        7
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        8,
+                        9
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        10,
+                        14
+                    ],
+                    "pick": 1
+                }
             ]
         },
         {
@@ -26,10 +52,36 @@
             "reversed": false,
             "description": "Medium hit to head reaction",
             "segments": [
-                {"action_frames": [0, 4], "pick": 1},
-                {"action_frames": [5, 8], "pick": 1, "expression": "surprised"},
-                {"action_frames": [9, 11], "pick": 1, "expression": "surprised"},
-                {"action_frames": [12, 15], "pick": 1}
+                {
+                    "action_frames": [
+                        1,
+                        4
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        5,
+                        8
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        9,
+                        11
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        12,
+                        15
+                    ],
+                    "pick": 1
+                }
             ]
         },
         {
@@ -39,10 +91,36 @@
             "reversed": false,
             "description": "Stomach hit reaction",
             "segments": [
-                {"action_frames": [0, 6], "pick": 1},
-                {"action_frames": [7, 9], "pick": 1, "expression": "surprised"},
-                {"action_frames": [11, 14], "pick": 1, "expression": "surprised"},
-                {"action_frames": [15, 18], "pick": 1}
+                {
+                    "action_frames": [
+                        1,
+                        6
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        7,
+                        9
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        11,
+                        14
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        15,
+                        18
+                    ],
+                    "pick": 1
+                }
             ]
         },
         {
@@ -51,12 +129,36 @@
             "frames": 4,
             "reversed": false,
             "hair_reset": true,
-            "description": "Blocking stance — hair_reset shifts strip to frame 1 before spring bone sim so hair starts from rest",
+            "description": "Blocking stance \u2014 hair_reset shifts strip to frame 1 before spring bone sim so hair starts from rest",
             "segments": [
-                {"action_frames": [38, 40], "pick": 1},
-                {"action_frames": [41, 43], "pick": 1},
-                {"action_frames": [44, 46], "pick": 1},
-                {"action_frames": [47, 50], "pick": 1}
+                {
+                    "action_frames": [
+                        38,
+                        40
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        41,
+                        43
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        44,
+                        46
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        47,
+                        50
+                    ],
+                    "pick": 1
+                }
             ]
         }
     ],

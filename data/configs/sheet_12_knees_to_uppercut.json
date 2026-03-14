@@ -5,7 +5,7 @@
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "camera_ortho_scale": 1.67,
-    "prompt": "A 4x4 sprite sheet of a character performing knee jabs followed by an uppercut punch.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter jabbing with alternating knee strikes building momentum, then launching an uppercut punch and recovering",
     "animations": [
         {
             "name": "Knee Jabs To Uppercut",
@@ -14,22 +14,118 @@
             "reversed": false,
             "description": "Knee jabs transitioning into an uppercut",
             "segments": [
-                {"action_frames": [1, 13], "pick": 1},
-                {"action_frames": [18, 19], "pick": 1},
-                {"action_frames": [20, 22], "pick": 1},
-                {"action_frames": [23, 26], "pick": 1},
-                {"action_frames": [32, 34], "pick": 1},
-                {"action_frames": [36, 37], "pick": 1},
-                {"action_frames": [39, 40], "pick": 1},
-                {"action_frames": [43, 44], "pick": 1},
-                {"action_frames": [47, 47], "pick": 1},
-                {"action_frames": [50, 51], "pick": 1},
-                {"action_frames": [52, 53], "pick": 1},
-                {"action_frames": [71, 72], "pick": 1},
-                {"action_frames": [77, 78], "pick": 1},
-                {"action_frames": [84, 85], "pick": 1},
-                {"action_frames": [87, 88], "pick": 1},
-                {"action_frames": [95, 96], "pick": 1}
+                {
+                    "action_frames": [
+                        1,
+                        13
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        18,
+                        19
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        20,
+                        22
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        23,
+                        26
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        32,
+                        34
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        36,
+                        37
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        39,
+                        40
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        43,
+                        44
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        47,
+                        47
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        50,
+                        51
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        52,
+                        53
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        71,
+                        72
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        77,
+                        78
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        84,
+                        85
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        87,
+                        88
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        95,
+                        96
+                    ],
+                    "pick": 1
+                }
             ]
         }
     ],

@@ -1,7 +1,7 @@
 {
     "name": "Run Forward + Run To Rolling",
     "sheet_index": 2,
-    "prompt": "A 4x4 sprite sheet of a character running forward, then leaning forward getting ready to roll, both hands reaching toward the ground for support, rolling with knees tucked in, using core strength to recover, pushing up with hands to stand, recovering to both legs standing, then continuing to run.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter running forward in stride, then leaning into a dive roll, tucking and rolling on the ground, then recovering to standing",
     "scene": "sheet_02_run_roll.blend",
     "camera": "perframe_ground",
     "camera_reference_frame": 1,
@@ -13,10 +13,38 @@
             "frames": 4,
             "reversed": false,
             "segments": [
-                {"action_frames": [2, 2], "pick": 1, "description": "Running forward"},
-                {"action_frames": [5, 5], "pick": 1, "description": "Running forward"},
-                {"action_frames": [7, 7], "pick": 1, "description": "Running forward"},
-                {"action_frames": [11, 11], "pick": 1, "description": "Running forward"}
+                {
+                    "action_frames": [
+                        2,
+                        2
+                    ],
+                    "pick": 1,
+                    "description": "Running forward"
+                },
+                {
+                    "action_frames": [
+                        5,
+                        5
+                    ],
+                    "pick": 1,
+                    "description": "Running forward"
+                },
+                {
+                    "action_frames": [
+                        7,
+                        7
+                    ],
+                    "pick": 1,
+                    "description": "Running forward"
+                },
+                {
+                    "action_frames": [
+                        11,
+                        11
+                    ],
+                    "pick": 1,
+                    "description": "Running forward"
+                }
             ]
         },
         {
@@ -25,18 +53,102 @@
             "frames": 12,
             "reversed": false,
             "segments": [
-                {"action_frames": [3, 3], "pick": 1, "description": "Leaning forward, getting ready to roll"},
-                {"action_frames": [7, 7], "pick": 1, "description": "Leaning forward, getting ready to roll"},
-                {"action_frames": [12, 14], "pick": 1, "description": "Both hands towards the ground for support, body bend"},
-                {"action_frames": [15, 16], "pick": 1, "description": "Rolling, knees tucked in"},
-                {"action_frames": [20, 20], "pick": 1, "description": "Rolling, knees tucked in"},
-                {"action_frames": [23, 23], "pick": 1, "description": "Recovery, using core strength to get up"},
-                {"action_frames": [26, 27], "pick": 1, "description": "Using hands to support herself to get up"},
-                {"action_frames": [30, 31], "pick": 1, "description": "Using hands to support herself to get up"},
-                {"action_frames": [34, 36], "pick": 1, "description": "Recovering, both legs standing"},
-                {"action_frames": [41, 44], "pick": 1, "description": "Recovering, both legs standing"},
-                {"action_frames": [46, 48], "pick": 1, "description": "Continue running"},
-                {"action_frames": [50, 52], "pick": 1, "description": "Continue running"}
+                {
+                    "action_frames": [
+                        3,
+                        3
+                    ],
+                    "pick": 1,
+                    "description": "Leaning forward, getting ready to roll"
+                },
+                {
+                    "action_frames": [
+                        7,
+                        7
+                    ],
+                    "pick": 1,
+                    "description": "Leaning forward, getting ready to roll"
+                },
+                {
+                    "action_frames": [
+                        12,
+                        14
+                    ],
+                    "pick": 1,
+                    "description": "Both hands towards the ground for support, body bend"
+                },
+                {
+                    "action_frames": [
+                        15,
+                        16
+                    ],
+                    "pick": 1,
+                    "description": "Rolling, knees tucked in"
+                },
+                {
+                    "action_frames": [
+                        20,
+                        20
+                    ],
+                    "pick": 1,
+                    "description": "Rolling, knees tucked in"
+                },
+                {
+                    "action_frames": [
+                        23,
+                        23
+                    ],
+                    "pick": 1,
+                    "description": "Recovery, using core strength to get up"
+                },
+                {
+                    "action_frames": [
+                        26,
+                        27
+                    ],
+                    "pick": 1,
+                    "description": "Using hands to support herself to get up"
+                },
+                {
+                    "action_frames": [
+                        30,
+                        31
+                    ],
+                    "pick": 1,
+                    "description": "Using hands to support herself to get up"
+                },
+                {
+                    "action_frames": [
+                        34,
+                        36
+                    ],
+                    "pick": 1,
+                    "description": "Recovering, both legs standing"
+                },
+                {
+                    "action_frames": [
+                        41,
+                        44
+                    ],
+                    "pick": 1,
+                    "description": "Recovering, both legs standing"
+                },
+                {
+                    "action_frames": [
+                        46,
+                        48
+                    ],
+                    "pick": 1,
+                    "description": "Continue running"
+                },
+                {
+                    "action_frames": [
+                        50,
+                        52
+                    ],
+                    "pick": 1,
+                    "description": "Continue running"
+                }
             ]
         }
     ],

@@ -122,6 +122,232 @@ def load_config(config_path):
 
 
 # ============================================================================
+# Animation corrections (applied to actions before NLA push)
+# ============================================================================
+
+def _get_action_fcurves(action):
+    """Get all fcurves from a Blender 5.0 slotted action."""
+    fcurves = []
+    for layer in action.layers:
+        for strip in layer.strips:
+            for cb in strip.channelbags:
+                fcurves.extend(cb.fcurves)
+    return fcurves
+
+
+def _apply_orientation_fix(action, fix_config):
+    """
+    Apply orientation correction to an action's object-level fcurves.
+
+    fix_config keys:
+        z_rotation_offset_deg: degrees to add to rotation_euler[2]
+        xy_location_rotation_deg: degrees to rotate location X,Y by
+    """
+    z_offset = math.radians(fix_config.get('z_rotation_offset_deg', 0))
+    xy_angle = math.radians(fix_config.get('xy_location_rotation_deg', 0))
+    cos_a = math.cos(xy_angle)
+    sin_a = math.sin(xy_angle)
+
+    fcurves = _get_action_fcurves(action)
+
+    # Build lookup: (data_path, array_index) -> fcurve
+    fc_map = {}
+    for fc in fcurves:
+        fc_map[(fc.data_path, fc.array_index)] = fc
+
+    # Apply Z rotation offset
+    if z_offset and ('rotation_euler', 2) in fc_map:
+        fc = fc_map[('rotation_euler', 2)]
+        for kp in fc.keyframe_points:
+            kp.co[1] += z_offset
+        fc.update()
+        print(f"    Orientation fix: Z rotation +{fix_config['z_rotation_offset_deg']}°")
+
+    # Apply XY location rotation
+    if xy_angle:
+        fc_x = fc_map.get(('location', 0))
+        fc_y = fc_map.get(('location', 1))
+        if fc_x and fc_y:
+            # Read all keyframe values first
+            x_vals = {int(kp.co[0]): kp.co[1] for kp in fc_x.keyframe_points}
+            y_vals = {int(kp.co[0]): kp.co[1] for kp in fc_y.keyframe_points}
+            # Apply 2D rotation
+            for kp in fc_x.keyframe_points:
+                f = int(kp.co[0])
+                ox, oy = x_vals[f], y_vals.get(f, 0)
+                kp.co[1] = ox * cos_a - oy * sin_a
+            for kp in fc_y.keyframe_points:
+                f = int(kp.co[0])
+                ox, oy = x_vals.get(f, 0), y_vals[f]
+                kp.co[1] = ox * sin_a + oy * cos_a
+            fc_x.update()
+            fc_y.update()
+            print(f"    Orientation fix: XY location rotated +{fix_config['xy_location_rotation_deg']}°")
+
+
+def _mirror_action(action, armature_name):
+    """
+    Mirror a Mixamo/VRoid action: swap L/R bones, negate appropriate components.
+
+    Returns a new mirrored action (original is unchanged).
+    """
+    mirrored = action.copy()
+    mirrored.name = action.name + '_mirror'
+
+    # Fix slot identifier
+    for slot in mirrored.slots:
+        slot.identifier = "OB" + armature_name
+
+    fcurves = _get_action_fcurves(mirrored)
+
+    # Build lookup: (data_path, array_index) -> fcurve
+    fc_map = {}
+    for fc in fcurves:
+        fc_map[(fc.data_path, fc.array_index)] = fc
+
+    # --- Object-level transforms ---
+    # location X: negate
+    fc = fc_map.get(('location', 0))
+    if fc:
+        for kp in fc.keyframe_points:
+            kp.co[1] = -kp.co[1]
+        fc.update()
+
+    # rotation_euler Y: negate
+    fc = fc_map.get(('rotation_euler', 1))
+    if fc:
+        for kp in fc.keyframe_points:
+            kp.co[1] = -kp.co[1]
+        fc.update()
+
+    # rotation_euler Z: negate
+    fc = fc_map.get(('rotation_euler', 2))
+    if fc:
+        for kp in fc.keyframe_points:
+            kp.co[1] = -kp.co[1]
+        fc.update()
+
+    # --- Find all bone names referenced in fcurves ---
+    bone_names = set()
+    for dp, _ in fc_map:
+        if dp.startswith('pose.bones["'):
+            bname = dp.split('"')[1]
+            bone_names.add(bname)
+
+    # Separate into L/R pairs and center bones
+    lr_pairs = {}  # base_name -> (L_name, R_name)
+    center_bones = []
+    paired = set()
+    for bname in bone_names:
+        if '_L_' in bname:
+            r_name = bname.replace('_L_', '_R_')
+            if r_name in bone_names:
+                base = bname.replace('_L_', '_X_')
+                lr_pairs[base] = (bname, r_name)
+                paired.add(bname)
+                paired.add(r_name)
+    for bname in bone_names:
+        if bname not in paired:
+            center_bones.append(bname)
+
+    # --- Swap L/R pairs ---
+    for base, (l_name, r_name) in lr_pairs.items():
+        l_prefix = f'pose.bones["{l_name}"].'
+        r_prefix = f'pose.bones["{r_name}"].'
+
+        # Find all fcurve suffixes for L bone
+        l_suffixes = {}
+        r_suffixes = {}
+        for (dp, idx), fc in fc_map.items():
+            if dp.startswith(l_prefix):
+                suffix = dp[len(l_prefix):]
+                l_suffixes[(suffix, idx)] = fc
+            elif dp.startswith(r_prefix):
+                suffix = dp[len(r_prefix):]
+                r_suffixes[(suffix, idx)] = fc
+
+        # Swap keyframe values between L and R
+        all_suffixes = set(l_suffixes.keys()) | set(r_suffixes.keys())
+        for key in all_suffixes:
+            l_fc = l_suffixes.get(key)
+            r_fc = r_suffixes.get(key)
+            if l_fc and r_fc and len(l_fc.keyframe_points) == len(r_fc.keyframe_points):
+                suffix, idx = key
+                is_quat_yz = 'rotation_quaternion' in suffix and idx in (2, 3)
+
+                for i in range(len(l_fc.keyframe_points)):
+                    l_val = l_fc.keyframe_points[i].co[1]
+                    r_val = r_fc.keyframe_points[i].co[1]
+                    if is_quat_yz:
+                        l_fc.keyframe_points[i].co[1] = -r_val
+                        r_fc.keyframe_points[i].co[1] = -l_val
+                    else:
+                        l_fc.keyframe_points[i].co[1] = r_val
+                        r_fc.keyframe_points[i].co[1] = l_val
+                l_fc.update()
+                r_fc.update()
+
+    # --- Center bones: negate quat Y,Z ---
+    for bname in center_bones:
+        prefix = f'pose.bones["{bname}"].'
+        for idx in (2, 3):  # quat Y, Z
+            fc = fc_map.get((prefix + 'rotation_quaternion', idx))
+            if fc:
+                for kp in fc.keyframe_points:
+                    kp.co[1] = -kp.co[1]
+                fc.update()
+
+    print(f"    Mirrored action: {mirrored.name} ({len(lr_pairs)} L/R pairs, {len(center_bones)} center bones)")
+    return mirrored
+
+
+def _apply_armature_z_override(armature, override_config):
+    """
+    Create an active action on the armature that overrides Z rotation per frame.
+
+    override_config: list of {"frame": int, "z_degrees": float}
+    Uses keyframe_insert on the armature object to let Blender handle
+    the 5.0 slotted action creation automatically.
+    """
+    # Ensure rotation mode is Euler
+    armature.rotation_mode = 'XYZ'
+
+    # Insert keyframes via the object API (auto-creates action + slots)
+    scene_end = bpy.context.scene.frame_end or 253
+    for entry in override_config:
+        frame = entry['frame']
+        value = math.radians(entry['z_degrees'])
+        armature.rotation_euler[2] = value
+        armature.keyframe_insert(data_path='rotation_euler', index=2, frame=frame)
+
+    # Add a hold keyframe at scene end (prevents NLA strip cycling)
+    last_value = math.radians(override_config[-1]['z_degrees'])
+    armature.rotation_euler[2] = last_value
+    armature.keyframe_insert(data_path='rotation_euler', index=2, frame=scene_end)
+
+    # Set all keyframes to CONSTANT interpolation
+    action = armature.animation_data.action
+    action.name = 'ArmatureZOverride'
+    for fc in _get_action_fcurves(action):
+        if fc.data_path == 'rotation_euler' and fc.array_index == 2:
+            for kp in fc.keyframe_points:
+                kp.interpolation = 'CONSTANT'
+            fc.update()
+
+    # Push to NLA as REPLACE track (survives spring bones overwriting active action)
+    track = armature.animation_data.nla_tracks.new()
+    track.name = 'ArmatureZOverride'
+    strip = track.strips.new('ArmatureZOverride', 1, action)
+    strip.frame_start = 1
+    strip.frame_end = scene_end
+    strip.blend_type = 'REPLACE'
+    strip.extrapolation = 'NOTHING'
+    armature.animation_data.action = None
+
+    print(f"  Armature Z override: {len(override_config)} keyframes applied")
+
+
+# ============================================================================
 # Scene setup
 # ============================================================================
 
@@ -137,8 +363,20 @@ def setup_scene(config=None):
     if config is None:
         raise ValueError("No config loaded. Call load_config() first.")
 
-    # Start fresh
-    bpy.ops.wm.read_factory_settings(use_empty=True)
+    # Start fresh — clear scene manually (read_factory_settings kills MCP)
+    bpy.ops.object.select_all(action='SELECT')
+    bpy.ops.object.delete()
+    for block in list(bpy.data.meshes):
+        bpy.data.meshes.remove(block)
+    for block in list(bpy.data.armatures):
+        bpy.data.armatures.remove(block)
+    for block in list(bpy.data.actions):
+        bpy.data.actions.remove(block)
+    for block in list(bpy.data.cameras):
+        bpy.data.cameras.remove(block)
+    for block in list(bpy.data.lights):
+        bpy.data.lights.remove(block)
+    # Keep materials — they'll be replaced by FBX import
 
     animations = config['animations']
     scene = bpy.context.scene
@@ -177,6 +415,12 @@ def setup_scene(config=None):
             for slot in action.slots:
                 slot.identifier = "OB" + armature.name
 
+            # Apply animation corrections from config
+            if 'orientation_fix' in anim:
+                _apply_orientation_fix(action, anim['orientation_fix'])
+            if anim.get('mirror', False):
+                action = _mirror_action(action, armature.name)
+
             # Push to NLA
             track = armature.animation_data.nla_tracks.new()
             track.name = anim['name']
@@ -212,6 +456,12 @@ def setup_scene(config=None):
                 for slot in action.slots:
                     slot.identifier = "OB" + armature.name
 
+                # Apply animation corrections from config
+                if 'orientation_fix' in anim:
+                    _apply_orientation_fix(action, anim['orientation_fix'])
+                if anim.get('mirror', False):
+                    action = _mirror_action(action, armature.name)
+
                 # Push to NLA on original armature
                 if armature.animation_data is None:
                     armature.animation_data_create()
@@ -241,10 +491,14 @@ def setup_scene(config=None):
     if armature.animation_data:
         armature.animation_data.action = None
 
-    # Set scene range
+    # Set scene range (must be before Z override so it can add hold keyframe)
     scene_end = current_frame - NLA_GAP - 1
     scene.frame_start = 1
     scene.frame_end = scene_end
+
+    # Apply armature Z rotation override if configured
+    if 'armature_z_override' in config:
+        _apply_armature_z_override(armature, config['armature_z_override'])
 
     # Store state
     _state['armature'] = armature
@@ -262,6 +516,170 @@ def setup_scene(config=None):
 
     # Print NLA summary
     print(f"\n--- NLA Summary ---")
+    for track in armature.animation_data.nla_tracks:
+        for strip in track.strips:
+            print(f"  {track.name}: frames {strip.frame_start}-{strip.frame_end} "
+                  f"(action {strip.action_frame_start}-{strip.action_frame_end})")
+    print(f"Scene range: {scene.frame_start}-{scene.frame_end}")
+    print(f"Face mesh: {_state['face_obj'].name if _state['face_obj'] else 'None'}")
+
+    return armature
+
+
+def setup_scene_vrm(config, vrm_path, animations_dir=None):
+    """
+    Set up scene with a VRM character instead of the FBX character.
+
+    Imports the VRM first, then for each animation FBX:
+    - Imports FBX to get the action
+    - Reassigns the action's slot to the VRM armature (same bone names)
+    - Applies corrections and pushes to NLA
+    - Deletes FBX duplicate objects
+
+    No retarget addon needed — VRoid characters share identical bone names
+    and rest poses with Mixamo-rigged VRoid FBX files.
+
+    Args:
+        config: Config dict from load_config()
+        vrm_path: Path to the .vrm character file
+        animations_dir: Override directory for animation FBX files (default: ANIMATIONS_DIR)
+    """
+    if animations_dir is None:
+        animations_dir = ANIMATIONS_DIR
+    if config is None:
+        raise ValueError("No config provided.")
+
+    # Start fresh
+    bpy.ops.object.select_all(action='SELECT')
+    bpy.ops.object.delete()
+    for block in list(bpy.data.meshes):
+        bpy.data.meshes.remove(block)
+    for block in list(bpy.data.armatures):
+        bpy.data.armatures.remove(block)
+    for block in list(bpy.data.actions):
+        bpy.data.actions.remove(block)
+    for block in list(bpy.data.cameras):
+        bpy.data.cameras.remove(block)
+    for block in list(bpy.data.lights):
+        bpy.data.lights.remove(block)
+
+    # Import VRM character
+    char_name = os.path.splitext(os.path.basename(vrm_path))[0]
+    print(f"\nImporting VRM character: {char_name}")
+    bpy.ops.import_scene.vrm(filepath=vrm_path)
+
+    # Delete empties (VRM colliders + Freestyle crash prevention)
+    for obj in list(bpy.data.objects):
+        if obj.type == 'EMPTY':
+            bpy.data.objects.remove(obj, do_unlink=True)
+
+    # Find VRM armature
+    armature = None
+    for obj in bpy.data.objects:
+        if obj.type == 'ARMATURE':
+            armature = obj
+            break
+    if armature is None:
+        raise RuntimeError("No armature found after VRM import")
+
+    print(f"  Armature: {armature.name} ({len(armature.data.bones)} bones)")
+    print(f"  Meshes: {[c.name for c in armature.children if c.type == 'MESH']}")
+
+    # Ensure animation data exists on VRM armature
+    if armature.animation_data is None:
+        armature.animation_data_create()
+
+    animations = config['animations']
+    scene = bpy.context.scene
+    current_frame = 1
+
+    for ai, anim in enumerate(animations):
+        fbx_path = os.path.join(animations_dir, anim['fbx'])
+        if not os.path.exists(fbx_path):
+            raise FileNotFoundError(f"Animation FBX not found: {fbx_path}")
+
+        print(f"\nImporting animation: {anim['name']} from {anim['fbx']}...")
+        bpy.ops.import_scene.fbx(filepath=fbx_path)
+
+        # Delete empties
+        for obj in list(bpy.data.objects):
+            if obj.type == 'EMPTY':
+                bpy.data.objects.remove(obj, do_unlink=True)
+
+        # Find the FBX armature (not the VRM one)
+        fbx_arm = None
+        for obj in bpy.data.objects:
+            if obj.type == 'ARMATURE' and obj != armature:
+                fbx_arm = obj
+                break
+
+        if fbx_arm and fbx_arm.animation_data and fbx_arm.animation_data.action:
+            action = fbx_arm.animation_data.action
+            action.name = anim['name']
+            action_end = int(action.frame_range[1])
+
+            # Reassign slot to VRM armature (same bone names = direct transfer)
+            for slot in action.slots:
+                slot.identifier = "OB" + armature.name
+
+            # Apply animation corrections
+            if 'orientation_fix' in anim:
+                _apply_orientation_fix(action, anim['orientation_fix'])
+            if anim.get('mirror', False):
+                action = _mirror_action(action, armature.name)
+
+            # Push to NLA on VRM armature
+            track = armature.animation_data.nla_tracks.new()
+            track.name = anim['name']
+            strip = track.strips.new(anim['name'], current_frame, action)
+            strip.frame_start = current_frame
+            strip.frame_end = current_frame + action_end - 1
+            strip.extrapolation = 'NOTHING'
+
+            if anim.get('reversed', False):
+                strip.use_reverse = True
+
+            print(f"  NLA: {anim['name']} frames {strip.frame_start}-{strip.frame_end}")
+            current_frame = int(strip.frame_end) + NLA_GAP + 1
+
+        # Delete ALL FBX objects (armature + meshes)
+        for obj in list(bpy.data.objects):
+            if obj.type == 'ARMATURE' and obj != armature:
+                bpy.data.objects.remove(obj, do_unlink=True)
+        for obj in list(bpy.data.objects):
+            if obj.type == 'MESH' and obj not in armature.children_recursive:
+                bpy.data.objects.remove(obj, do_unlink=True)
+
+    # Clear any remaining active action
+    if armature.animation_data:
+        armature.animation_data.action = None
+
+    # Set scene range
+    scene_end = current_frame - NLA_GAP - 1
+    scene.frame_start = 1
+    scene.frame_end = scene_end
+
+    # Apply armature Z rotation override if configured
+    if 'armature_z_override' in config:
+        _apply_armature_z_override(armature, config['armature_z_override'])
+
+    # Store state
+    _state['armature'] = armature
+    _state['meshes'] = [c for c in armature.children if c.type == 'MESH']
+    _state['scene_start'] = 1
+    _state['scene_end'] = scene_end
+
+    # Find Face mesh (for expressions)
+    _state['face_obj'] = None
+    for obj in _state['meshes']:
+        if obj.data.shape_keys:
+            keys = [k.name for k in obj.data.shape_keys.key_blocks]
+            if 'Fcl_ALL_Surprised' in keys:
+                _state['face_obj'] = obj
+                break
+
+    # Print summary
+    print(f"\n--- NLA Summary ({char_name}) ---")
     for track in armature.animation_data.nla_tracks:
         for strip in track.strips:
             print(f"  {track.name}: frames {strip.frame_start}-{strip.frame_end} "

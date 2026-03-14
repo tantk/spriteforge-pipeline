@@ -2,7 +2,7 @@
     "name": "Kicking",
     "sheet_index": 7,
     "scene": "sheet_07_kicking.blend",
-    "prompt": "A 4x4 sprite sheet of a character performing a spinning mid-air kick from a three-quarter view. Starting from fighting stance, stepping forward and winding up, turning her back to the camera while chambering the knee, launching a spinning kick with full leg extension in mid-air with a surprised expression, then landing and recovering back to fighting stance.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter stepping forward into a spinning mid-air kick, rotating with leg fully extended at apex, then landing and recovering to stance",
     "animations": [
         {
             "name": "Kicking",
@@ -11,22 +11,122 @@
             "reversed": false,
             "description": "Forward push kick with chamber, extension, and recovery",
             "segments": [
-                {"action_frames": [12, 18], "pick": 1},
-                {"action_frames": [19, 24], "pick": 1},
-                {"action_frames": [25, 28], "pick": 1},
-                {"action_frames": [29, 31], "pick": 1},
-                {"action_frames": [32, 33], "pick": 1},
-                {"action_frames": [34, 34], "pick": 1},
-                {"action_frames": [35, 36], "pick": 1},
-                {"action_frames": [37, 37], "pick": 1},
-                {"action_frames": [38, 39], "pick": 1},
-                {"action_frames": [40, 41], "pick": 1, "expression": "surprised"},
-                {"action_frames": [42, 43], "pick": 1, "expression": "surprised"},
-                {"action_frames": [44, 45], "pick": 1, "expression": "surprised"},
-                {"action_frames": [46, 48], "pick": 1, "expression": "surprised"},
-                {"action_frames": [49, 51], "pick": 1},
-                {"action_frames": [52, 54], "pick": 1},
-                {"action_frames": [56, 78], "pick": 1}
+                {
+                    "action_frames": [
+                        12,
+                        18
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        19,
+                        24
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        25,
+                        28
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        29,
+                        31
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        32,
+                        33
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        34,
+                        34
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        35,
+                        36
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        37,
+                        37
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        38,
+                        39
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        40,
+                        41
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        42,
+                        43
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        44,
+                        45
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        46,
+                        48
+                    ],
+                    "pick": 1,
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        49,
+                        51
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        52,
+                        54
+                    ],
+                    "pick": 1
+                },
+                {
+                    "action_frames": [
+                        56,
+                        78
+                    ],
+                    "pick": 1
+                }
             ]
         }
     ],

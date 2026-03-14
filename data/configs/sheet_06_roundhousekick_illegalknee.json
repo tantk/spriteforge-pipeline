@@ -4,7 +4,7 @@
     "scene": "sheet_06_roundhousekick_illegalknee.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
-    "prompt": "A 4x4 sprite sheet of a character performing an illegal knee strike with knee driving upward with a shouting expression on impact, then a spinning roundhouse kick with full body rotation through wind-up, leg extension with shouting expression on impact, and follow-through.",
+    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter driving a knee strike upward to peak impact, then winding up a spinning roundhouse kick with full leg extension and follow-through",
     "animations": [
         {
             "name": "Illegal Knee",
@@ -13,11 +13,48 @@
             "reversed": false,
             "description": "Illegal knee strike driving upward",
             "segments": [
-                {"action_frames": [1, 12], "pick": 2, "description": "Wind-up / stance"},
-                {"action_frames": [13, 18], "pick": 2, "description": "Knee driving upward", "expression": "surprised"},
-                {"action_frames": [19, 20], "pick": 1, "description": "Peak impact", "expression": "surprised"},
-                {"action_frames": [21, 25], "pick": 2, "description": "Follow-through"},
-                {"action_frames": [26, 31], "pick": 1, "description": "Recovery"}
+                {
+                    "action_frames": [
+                        1,
+                        12
+                    ],
+                    "pick": 2,
+                    "description": "Wind-up / stance"
+                },
+                {
+                    "action_frames": [
+                        13,
+                        18
+                    ],
+                    "pick": 2,
+                    "description": "Knee driving upward",
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        19,
+                        20
+                    ],
+                    "pick": 1,
+                    "description": "Peak impact",
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        21,
+                        25
+                    ],
+                    "pick": 2,
+                    "description": "Follow-through"
+                },
+                {
+                    "action_frames": [
+                        26,
+                        31
+                    ],
+                    "pick": 1,
+                    "description": "Recovery"
+                }
             ]
         },
         {
@@ -26,14 +63,69 @@
             "frames": 8,
             "reversed": false,
             "description": "Spinning roundhouse kick with full body rotation",
+            "orientation_fix": {
+                "z_rotation_offset_deg": 42.0,
+                "xy_location_rotation_deg": 42.0
+            },
             "segments": [
-                {"action_frames": [0, 8], "pick": 1, "description": "Fighting stance"},
-                {"action_frames": [9, 12], "pick": 1, "description": "Wind-up / chamber"},
-                {"action_frames": [13, 22], "pick": 2, "description": "Spin and leg extension"},
-                {"action_frames": [23, 24], "pick": 1, "description": "Peak kick impact", "expression": "surprised"},
-                {"action_frames": [25, 27], "pick": 1, "description": "Full extension impact", "expression": "surprised"},
-                {"action_frames": [28, 31], "pick": 1, "description": "Leg retraction"},
-                {"action_frames": [32, 43], "pick": 1, "description": "Recovery to stance"}
+                {
+                    "action_frames": [
+                        1,
+                        8
+                    ],
+                    "pick": 1,
+                    "description": "Fighting stance"
+                },
+                {
+                    "action_frames": [
+                        9,
+                        12
+                    ],
+                    "pick": 1,
+                    "description": "Wind-up / chamber"
+                },
+                {
+                    "action_frames": [
+                        13,
+                        22
+                    ],
+                    "pick": 2,
+                    "description": "Spin and leg extension"
+                },
+                {
+                    "action_frames": [
+                        23,
+                        24
+                    ],
+                    "pick": 1,
+                    "description": "Peak kick impact",
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        25,
+                        27
+                    ],
+                    "pick": 1,
+                    "description": "Full extension impact",
+                    "expression": "surprised"
+                },
+                {
+                    "action_frames": [
+                        28,
+                        31
+                    ],
+                    "pick": 1,
+                    "description": "Leg retraction"
+                },
+                {
+                    "action_frames": [
+                        32,
+                        43
+                    ],
+                    "pick": 1,
+                    "description": "Recovery to stance"
+                }
             ]
         }
     ],

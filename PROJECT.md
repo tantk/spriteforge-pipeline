@@ -7,23 +7,32 @@
 
 ---
 
-## Current Concept: 3D Animation → 2D Pixel Art Sprite Sheets
+## Concept: Character Reference → Animated Sprite Sheet
 
-Train a LoRA that converts 3D rendered character animation frames into pixel art sprite sheets — useful for indie game developers who want to quickly generate sprite assets from 3D models.
+Train a LoRA that generates animated fighting sprite sheets from a character reference image. Users provide any character image (3D, pixel art, photo) and get a 4x4 sprite sheet of that character performing combat animations.
 
 ### Training Data Format
-- **Input:** 3D rendered sprite sheet (1024x1024, 4x4 grid of 256x256 frames)
-- **Output:** Pixel art sprite sheet (same layout)
-- **Target:** ~50 training pairs (5 characters x 10 sprite sheets each)
+- **Input:** 1024x1024 character reference image (idle fighting stance, 3/4 ortho camera)
+- **Output:** 1024x1024 sprite sheet (4x4 grid of 256x256 animated frames)
+- **Pairs:** 91 core (7 characters × 13 sheets) + 9 horizontal flips = 100 (Civision max)
+
+### Trigger Word & Prompt Format
+- **Trigger word:** `sprt4x4`
+- **Format:** `sprt4x4, Generate 4x4 sprite sheet: a fighter [action description]`
+- **Example:** `sprt4x4, Generate 4x4 sprite sheet: a fighter starting in idle fighting stance with fists raised, then walking forward with alternating steps, then walking backward`
+- Prompts are action-focused (describe the animation sequence, not the character)
+- Character identity comes from the input image, not the prompt
+- Each config's `prompt` field contains the training prompt
 
 ### Pipeline Overview
 
 ```
-VRoid Studio → VRM → FBX (material fix) → Mixamo (auto-rig + animations)
-    → Blender (import, NLA, camera, hair physics, render)
-        → Assemble 16 frames into 1024x1024 sprite sheet + GIF
-            → Pixel art conversion (TODO)
-                → Training pairs
+VRoid Studio → VRM characters (7 total)
+    → Mixamo (auto-rig + 24 animations)
+        → Retarget + export per character (retarget_export.py)
+            → Blender render (batch_render_characters.py, GPU mode)
+                → 1024x1024 sprite sheets + character reference images
+                    → Training pairs (100 max on Civision)
 ```
 
 ---

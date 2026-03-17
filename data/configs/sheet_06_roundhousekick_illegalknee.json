@@ -4,7 +4,7 @@
     "scene": "sheet_06_roundhousekick_illegalknee.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter driving a knee strike upward to peak impact, then winding up a spinning roundhouse kick with full leg extension and follow-through",
+    "prompt": "Generate 4x4 sprite sheet: a fighter performing a knee strike then spinning roundhouse kick. Frame 1: fighting stance. Frame 2: shifting weight to back leg. Frame 3: knee driving upward. Frame 4: knee at peak height. Frame 5: knee at maximum impact point. Frame 6: leg dropping down. Frame 7: foot returning to ground. Frame 8: resetting stance. Frame 9: stepping forward to wind up kick. Frame 10: body turning back to camera. Frame 11: kicking leg chambering. Frame 12: leg extending out in roundhouse. Frame 13: leg at full extension horizontal. Frame 14: kick following through. Frame 15: leg coming down. Frame 16: landing back in stance.",
     "animations": [
         {
             "name": "Illegal Knee",

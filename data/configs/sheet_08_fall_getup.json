@@ -1,7 +1,7 @@
 {
     "name": "Fall + Get Up",
     "sheet_index": 8,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter staggering backward and falling to the ground, lying flat, then pushing up and recovering to standing position",
+    "prompt": "Generate 4x4 sprite sheet: a fighter falling backward then getting back up. Frame 1: standing being pushed back. Frame 2: staggering backward arms out. Frame 3: leaning far back off balance. Frame 4: falling backward legs leaving ground. Frame 5: mid-fall nearly horizontal. Frame 6: hitting the ground on back. Frame 7: flat on ground arms spread. Frame 8: lying on ground motionless. Frame 9: lying on ground starting to move. Frame 10: rolling onto side. Frame 11: pushing up with arms on ground. Frame 12: on hands and knees. Frame 13: one knee up pushing off ground. Frame 14: rising to crouch. Frame 15: straightening up. Frame 16: back to standing stance.",
     "scene": "sheet_08_fall_getup.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
@@ -191,5 +191,7 @@
     "total_frames": 16,
     "grid": "4x4",
     "resolution": "1024x1024",
-    "frame_size": "256x256"
+    "frame_size": "256x256",
+    "export_mode": "root_motion",
+    "export_note": "Needs zeroing + root motion re-add + rotation_mode=XYZ for armature_z_override to work. All other sheets use simple mode."
 }

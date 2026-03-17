@@ -5,7 +5,7 @@
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "camera_ortho_scale": 1.67,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter chambering left leg into a roundhouse kick at full extension then recovering, then stepping into a right push kick and pulling back",
+    "prompt": "Generate 4x4 sprite sheet: a fighter performing a left roundhouse kick then right push kick. Frame 1: stance left leg chambering up. Frame 2: left knee rising to hip height. Frame 3: left leg extending in roundhouse. Frame 4: left kick at full extension. Frame 5: left leg sweeping through. Frame 6: left leg retracting. Frame 7: left foot returning to ground. Frame 8: resetting stance. Frame 9: shifting weight for right kick. Frame 10: right knee chambering. Frame 11: right leg thrusting forward in push kick. Frame 12: right foot at full extension pushing. Frame 13: right kick following through. Frame 14: right leg pulling back. Frame 15: right foot coming down. Frame 16: returning to stance.",
     "animations": [
         {
             "name": "Martelo 2",

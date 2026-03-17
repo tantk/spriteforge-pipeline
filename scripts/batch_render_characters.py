@@ -74,6 +74,7 @@ ALL_CONFIGS = sorted([
 # Character paths
 CHAR_DIR = os.path.join(BASE_DIR, "data", "characters", "AvatarSample_B")
 ALL_VRMS = [
+    "original_character.vrm",
     "army_man.vrm",
     "blackdress_girl.vrm",
     "blackjacket_man.vrm",

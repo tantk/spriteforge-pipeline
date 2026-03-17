@@ -1,7 +1,7 @@
 {
     "name": "Run Forward + Run To Rolling",
     "sheet_index": 2,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter running forward in stride, then leaning into a dive roll, tucking and rolling on the ground, then recovering to standing",
+    "prompt": "Generate 4x4 sprite sheet: a fighter running then diving into a combat roll. Frame 1: running left foot forward leaning ahead. Frame 2: full sprint right leg pushing off. Frame 3: mid-run airborne between strides. Frame 4: sprint landing right foot. Frame 5: decelerating leaning forward. Frame 6: bending down hands reaching to ground. Frame 7: hands on ground knees bending. Frame 8: tucking into roll head going down. Frame 9: upside down mid-roll legs over head. Frame 10: rolling over back curled up. Frame 11: coming out of roll on side. Frame 12: on ground pushing up. Frame 13: crouched on all fours. Frame 14: hands pushing off ground. Frame 15: rising to standing. Frame 16: back to upright stance.",
     "scene": "sheet_02_run_roll.blend",
     "camera": "perframe_ground",
     "camera_reference_frame": 1,

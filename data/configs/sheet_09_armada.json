@@ -5,7 +5,7 @@
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "camera_ortho_scale": 1.67,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter winding up a capoeira spinning kick, turning with back to camera, sweeping leg around at full extension, then recovering to stance",
+    "prompt": "Generate 4x4 sprite sheet: a fighter performing a capoeira spinning kick. Frame 1: fighting stance leaning forward. Frame 2: stepping into spin weight on front foot. Frame 3: body turning back starting to face away. Frame 4: back to camera arms wide for balance. Frame 5: spinning kicking leg lifting. Frame 6: leg sweeping around horizontally. Frame 7: kick at full extension mid-spin. Frame 8: leg sweeping past high point. Frame 9: continuing rotation leg coming around. Frame 10: facing forward again leg still extended. Frame 11: kicking leg coming down. Frame 12: leg dropping toward ground. Frame 13: foot touching down. Frame 14: recovering balance. Frame 15: stepping back. Frame 16: returning to fighting stance.",
     "animations": [
         {
             "name": "Armada",

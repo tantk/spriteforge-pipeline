@@ -4,7 +4,7 @@
     "scene": "sheet_04_hookrighthook.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter rotating into a hook punch with follow-through, then a quick right hook with wind-up and recovery",
+    "prompt": "Generate 4x4 sprite sheet: a fighter performing a rotating hook punch then quick right hook. Frame 1: guard stance. Frame 2: body turning left for wind-up. Frame 3: torso rotating arm coming around. Frame 4: hook punch at full extension body twisted. Frame 5: following through past center. Frame 6: arm wrapping around. Frame 7: pulling back recovering. Frame 8: resetting stance. Frame 9: quick right hand cocking back. Frame 10: right arm shooting forward. Frame 11: right hook landing. Frame 12: fist at full extension. Frame 13: following through body leaning. Frame 14: pulling back. Frame 15: recovering balance. Frame 16: returning to guard.",
     "animations": [
         {
             "name": "Hook",

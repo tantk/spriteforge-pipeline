@@ -49,7 +49,6 @@ ANIMATIONS_DIR = os.path.join(BASE_DIR, "data", "animations")
 
 # All 7 VRM characters (exclude AvatarSample_B — that's the original)
 ALL_VRMS = [
-    "original_character.vrm",
     "army_man.vrm",
     "blackdress_girl.vrm",
     "blackjacket_man.vrm",
@@ -85,7 +84,6 @@ ALL_ANIMS = [
     "Stomach Hit.fbx",
     "Walking (1).fbx",
     "Walking.fbx",
-    "Northern Soul Spin.fbx",
 ]
 
 
@@ -109,24 +107,21 @@ def clean_scene():
         bpy.data.images.remove(block)
 
 
-def retarget_and_export(vrm_path, anim_fbx_path, output_fbx_path, root_motion=False):
+def retarget_and_export(vrm_path, anim_fbx_path, output_fbx_path):
     """
     Retarget a single animation onto a VRM character and export as FBX.
 
-    Two modes:
-      - Simple (root_motion=False): straight retarget → bake → export.
-        Used for 22 of 24 animations. DO NOT zero FBX transform.
-      - Root motion (root_motion=True): zero FBX transform, save/remove
-        root motion fcurves, retarget → bake, re-add root motion, set
-        rotation_mode='XYZ'. Used for sheet 08 animations (Falling Back
-        Death, Getting Up) where armature_z_override needs object-level
-        rotation fcurves preserved.
+    Workaround for Blender's FBX exporter: the exporter uses the current
+    pose (not rest pose) for the Model node transform. To get correct rest
+    pose in the exported FBX, we push the baked action to NLA, clear the
+    active action, and set frame to 0 (before the NLA strip). At frame 0,
+    the armature is at rest pose, so the Model node gets correct values.
+    The animation is still exported correctly from the NLA evaluation.
 
     Args:
         vrm_path: Path to .vrm file
         anim_fbx_path: Path to source animation .fbx
         output_fbx_path: Path for exported .fbx
-        root_motion: If True, use zeroing + root motion re-add mode
     """
     clean_scene()
 
@@ -173,25 +168,6 @@ def retarget_and_export(vrm_path, anim_fbx_path, output_fbx_path, root_motion=Fa
     action_end = int(action.frame_range[1])
     print(f"  Source action: {action.name}, frames 1-{action_end}")
 
-    # Root motion mode: zero FBX transform and save object-level fcurves
-    root_motion_data = []
-    if root_motion:
-        print("  Mode: ROOT_MOTION (zeroing + save/re-add)")
-        fbx_arm.location = (0, 0, 0)
-        fbx_arm.rotation_euler = (0, 0, 0)
-        fbx_arm.scale = (1, 1, 1)
-        for layer in action.layers:
-            for strip in layer.strips:
-                for cb in strip.channelbags:
-                    for fc in list(cb.fcurves):
-                        if 'pose.bones' not in fc.data_path:
-                            kf_data = [(kp.co[0], kp.co[1], kp.interpolation)
-                                       for kp in fc.keyframe_points]
-                            root_motion_data.append((fc.data_path, fc.array_index, kf_data))
-                            cb.fcurves.remove(fc)
-    else:
-        print("  Mode: SIMPLE (no zeroing)")
-
     # 3. Bind: FBX = active, VRM = selected
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.ops.object.select_all(action='DESELECT')
@@ -230,24 +206,6 @@ def retarget_and_export(vrm_path, anim_fbx_path, output_fbx_path, root_motion=Fa
         raise RuntimeError("Bake failed — no action on VRM armature")
     print(f"  Baked action: {baked_action.name}, range {baked_action.frame_range[:]}")
 
-    # Root motion mode: re-add saved object-level fcurves
-    if root_motion and root_motion_data:
-        vrm_arm.rotation_mode = 'XYZ'
-        for layer in baked_action.layers:
-            for strip in layer.strips:
-                for cb in strip.channelbags:
-                    for data_path, array_index, kf_data in root_motion_data:
-                        fc = cb.fcurves.new(data_path, index=array_index)
-                        fc.keyframe_points.add(len(kf_data))
-                        for i, (frame, value, interp) in enumerate(kf_data):
-                            fc.keyframe_points[i].co = (frame, value)
-                            fc.keyframe_points[i].interpolation = interp
-                        fc.update()
-                    break
-                break
-            break
-        print(f"  Root motion: {len(root_motion_data)} fcurves re-added")
-
     # 5. Export as FBX with correct rest pose
     bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -283,25 +241,6 @@ def retarget_and_export(vrm_path, anim_fbx_path, output_fbx_path, root_motion=Fa
         bake_anim_force_startend_keying=True,
     )
     print(f"  Exported: {output_fbx_path}")
-
-
-def _get_root_motion_anims():
-    """Scan configs to find which FBXs need root_motion export mode."""
-    import json, glob
-    rm_anims = set()
-    for cfg_path in glob.glob(os.path.join(CONFIG_DIR, "sheet_*.json")):
-        with open(cfg_path) as f:
-            cfg = json.load(f)
-        if cfg.get("export_mode") == "root_motion":
-            for anim in cfg["animations"]:
-                rm_anims.add(anim["fbx"])
-    return rm_anims
-
-
-CONFIG_DIR = os.path.join(BASE_DIR, "data", "configs")
-ROOT_MOTION_ANIMS = _get_root_motion_anims()
-if ROOT_MOTION_ANIMS:
-    print(f"Root motion mode animations: {ROOT_MOTION_ANIMS}")
 
 
 def process_character(char_vrm, anim_filter=None):
@@ -341,11 +280,8 @@ def process_character(char_vrm, anim_filter=None):
 
         try:
             t0 = time.time()
-            use_root_motion = anim_fbx in ROOT_MOTION_ANIMS
-            print(f"\n[{char_name}] Retargeting: {anim_fbx}" +
-                  (" [ROOT_MOTION]" if use_root_motion else ""))
-            retarget_and_export(vrm_path, anim_src, output_path,
-                                root_motion=use_root_motion)
+            print(f"\n[{char_name}] Retargeting: {anim_fbx}")
+            retarget_and_export(vrm_path, anim_src, output_path)
             elapsed = time.time() - t0
             print(f"  Done ({elapsed:.1f}s)")
             exported += 1

@@ -1,0 +1,150 @@
+{
+    "name": "Northern Soul Spin",
+    "sheet_index": 14,
+    "prompt": "Generate 4x4 sprite sheet: a fighter spinning in place showing all angles. Row 1: front 8\u00b0, front-right 27\u00b0, right-front 66\u00b0, right side 82\u00b0. Row 2: back-right 139\u00b0, left-back 250\u00b0, front-left 340\u00b0, right side 98\u00b0. Row 3: back-left 210\u00b0, left-front 292\u00b0, front-right 37\u00b0, back-right 132\u00b0. Row 4: back 189\u00b0, left 262\u00b0, settling 48\u00b0, idle stance 5\u00b0",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
+    "animations": [
+        {
+            "name": "Northern Soul Spin",
+            "fbx": "Northern Soul Spin.fbx",
+            "frames": 16,
+            "reversed": false,
+            "description": "Spinning dance move showing character from all angles",
+            "segments": [
+                {
+                    "action_frames": [
+                        1,
+                        1
+                    ],
+                    "pick": 1,
+                    "description": "Starting stance"
+                },
+                {
+                    "action_frames": [
+                        5,
+                        5
+                    ],
+                    "pick": 1,
+                    "description": "Beginning turn"
+                },
+                {
+                    "action_frames": [
+                        10,
+                        10
+                    ],
+                    "pick": 1,
+                    "description": "Quarter turn"
+                },
+                {
+                    "action_frames": [
+                        12,
+                        12
+                    ],
+                    "pick": 1,
+                    "description": "Side view"
+                },
+                {
+                    "action_frames": [
+                        15,
+                        15
+                    ],
+                    "pick": 1,
+                    "description": "Back angle"
+                },
+                {
+                    "action_frames": [
+                        19,
+                        19
+                    ],
+                    "pick": 1,
+                    "description": "Left-back view"
+                },
+                {
+                    "action_frames": [
+                        22,
+                        22
+                    ],
+                    "pick": 1,
+                    "description": "Front-left view"
+                },
+                {
+                    "action_frames": [
+                        26,
+                        26
+                    ],
+                    "pick": 1,
+                    "description": "Right side"
+                },
+                {
+                    "action_frames": [
+                        30,
+                        30
+                    ],
+                    "pick": 1,
+                    "description": "Back-left view"
+                },
+                {
+                    "action_frames": [
+                        33,
+                        33
+                    ],
+                    "pick": 1,
+                    "description": "Left-front view"
+                },
+                {
+                    "action_frames": [
+                        37,
+                        37
+                    ],
+                    "pick": 1,
+                    "description": "Front-right view"
+                },
+                {
+                    "action_frames": [
+                        41,
+                        41
+                    ],
+                    "pick": 1,
+                    "description": "Back-right view"
+                },
+                {
+                    "action_frames": [
+                        44,
+                        44
+                    ],
+                    "pick": 1,
+                    "description": "Back view"
+                },
+                {
+                    "action_frames": [
+                        48,
+                        48
+                    ],
+                    "pick": 1,
+                    "description": "Left view"
+                },
+                {
+                    "action_frames": [
+                        87,
+                        87
+                    ],
+                    "pick": 1,
+                    "description": "Settling down"
+                },
+                {
+                    "action_frames": [
+                        103,
+                        103
+                    ],
+                    "pick": 1,
+                    "description": "Idle stance"
+                }
+            ]
+        }
+    ],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

@@ -5,7 +5,7 @@
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "camera_ortho_scale": 1.67,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter throwing quick jabs and crosses, transitioning into spinning elbow strikes with body rotation, then recovering to fighting stance",
+    "prompt": "Generate 4x4 sprite sheet: a fighter performing a punch to elbow combo. Frame 1: guard stance stepping in. Frame 2: left jab shooting forward. Frame 3: lunging forward with right cross. Frame 4: deep lunge double punch both arms extended. Frame 5: pulling back from lunge. Frame 6: right cross retracting. Frame 7: body rotating for elbow. Frame 8: spinning elbow strike arm bent. Frame 9: elbow at impact point. Frame 10: following through spinning. Frame 11: quick jab snapping out. Frame 12: another short punch. Frame 13: elbow snapping with tight turn. Frame 14: body fully rotated. Frame 15: wide step back recovering. Frame 16: returning to fighting stance.",
     "animations": [
         {
             "name": "Punch To Elbow Combo",

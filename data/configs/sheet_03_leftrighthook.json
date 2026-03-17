@@ -4,7 +4,7 @@
     "scene": "sheet_03_leftrighthook.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter winding up a left hook punch and striking, then winding up a right hook punch and striking",
+    "prompt": "Generate 4x4 sprite sheet: a fighter performing left hook then right hook punches. Frame 1: guard stance fists up. Frame 2: left shoulder rotating back for wind-up. Frame 3: left arm extending forward in hook. Frame 4: left fist at full extension striking. Frame 5: left arm following through past target. Frame 6: pulling left arm back. Frame 7: returning to guard. Frame 8: squared up stance. Frame 9: right shoulder dropping for wind-up. Frame 10: right arm swinging forward. Frame 11: right hook connecting at full extension. Frame 12: right fist past target following through. Frame 13: body rotating with punch momentum. Frame 14: pulling right arm back. Frame 15: recovering balance. Frame 16: back to guard stance.",
     "animations": [
         {
             "name": "Hook (1)",

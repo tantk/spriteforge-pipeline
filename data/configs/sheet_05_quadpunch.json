@@ -4,7 +4,7 @@
     "scene": "sheet_05_quadpunch.blend",
     "camera": "hybrid",
     "camera_reference_frame": 1,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter starting in guard stance, throwing four rapid alternating punches left-right-left-right, then recovering to stance",
+    "prompt": "Generate 4x4 sprite sheet: a fighter throwing four rapid alternating punches. Frame 1: guard stance fists up. Frame 2: left jab extending forward. Frame 3: left fist at full extension. Frame 4: left arm retracting right loading. Frame 5: right cross shooting forward. Frame 6: right fist at full extension body rotated. Frame 7: right retracting left loading. Frame 8: left hook swinging wide. Frame 9: left hook at full extension. Frame 10: left retracting. Frame 11: right hook winding up. Frame 12: right hook at full extension. Frame 13: right following through. Frame 14: pulling both arms back. Frame 15: recovering to center. Frame 16: back to guard stance.",
     "animations": [
         {
             "name": "Quad Punch",

@@ -4,7 +4,7 @@
     "scene": "sheet_10_hit_block.blend",
     "render_script": "render_sheet_indv.py",
     "render_note": "All 4 animations play together in sequential NLA and spring bones run once across the full timeline. The first 3 (Head Hit, Medium Hit, Stomach Hit) render normally from their NLA positions. Block has hair_reset \u2014 at render time only, its NLA strip is shifted to frame 1 so the rendered frames show hair at rest, not hair carrying momentum from the 3 preceding hit animations.",
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter reacting to a head hit, reacting to a body hit, taking a stomach hit, then raising arms in a blocking stance",
+    "prompt": "Generate 4x4 sprite sheet: a fighter getting hit then blocking. Frame 1: standing getting hit in head snapping back. Frame 2: head recoiling from hit. Frame 3: recovering from head hit. Frame 4: returning to stance after head hit. Frame 5: getting hit in upper body leaning back. Frame 6: body recoiling from medium hit. Frame 7: absorbing the hit. Frame 8: recovering from body hit. Frame 9: getting punched in stomach bending forward. Frame 10: doubled over from stomach hit. Frame 11: recovering straightening up. Frame 12: returning to stance. Frame 13: raising both arms up in block position. Frame 14: arms crossed in front for defense. Frame 15: holding block stance. Frame 16: lowering arms from block.",
     "animations": [
         {
             "name": "Head Hit",

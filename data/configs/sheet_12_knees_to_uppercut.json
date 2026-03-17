@@ -5,7 +5,7 @@
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "camera_ortho_scale": 1.67,
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter jabbing with alternating knee strikes building momentum, then launching an uppercut punch and recovering",
+    "prompt": "Generate 4x4 sprite sheet: a fighter performing knee jabs then an uppercut. Frame 1: stance stepping forward. Frame 2: right knee driving up. Frame 3: knee at peak height. Frame 4: knee dropping left knee rising. Frame 5: left knee jabbing upward. Frame 6: alternating knee at peak. Frame 7: knee coming down stepping forward. Frame 8: loading right knee again. Frame 9: right knee driving up higher. Frame 10: knee at maximum height. Frame 11: planting foot winding up fist. Frame 12: crouching low for uppercut. Frame 13: fist driving upward from below. Frame 14: uppercut at full extension arm overhead. Frame 15: arm coming down. Frame 16: recovering to stance.",
     "animations": [
         {
             "name": "Knee Jabs To Uppercut",

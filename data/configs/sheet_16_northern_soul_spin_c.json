@@ -1,0 +1,150 @@
+{
+    "name": "Northern Soul Spin C",
+    "sheet_index": 16,
+    "prompt": "Generate 4x4 sprite sheet: a fighter spinning in place showing all angles. Row 1: front 12\u00b0, front-right 34\u00b0, right 72\u00b0, right-back 115\u00b0. Row 2: back 193\u00b0, left-back 280\u00b0, front-right 40\u00b0, back-right 154\u00b0. Row 3: left 265\u00b0, front-left 344\u00b0, right-back 110\u00b0, back 172\u00b0. Row 4: back-left 205\u00b0, left-back 222\u00b0, left-front 324\u00b0, idle stance 8\u00b0",
+    "camera": "hybrid",
+    "camera_reference_frame": 1,
+    "animations": [
+        {
+            "name": "Northern Soul Spin",
+            "fbx": "Northern Soul Spin.fbx",
+            "frames": 16,
+            "reversed": false,
+            "description": "Spinning dance move showing character from remaining angles",
+            "segments": [
+                {
+                    "action_frames": [
+                        2,
+                        2
+                    ],
+                    "pick": 1,
+                    "description": "Front 12\u00b0"
+                },
+                {
+                    "action_frames": [
+                        6,
+                        6
+                    ],
+                    "pick": 1,
+                    "description": "Front-right 34\u00b0"
+                },
+                {
+                    "action_frames": [
+                        11,
+                        11
+                    ],
+                    "pick": 1,
+                    "description": "Right 72\u00b0"
+                },
+                {
+                    "action_frames": [
+                        14,
+                        14
+                    ],
+                    "pick": 1,
+                    "description": "Right-back 115\u00b0"
+                },
+                {
+                    "action_frames": [
+                        17,
+                        17
+                    ],
+                    "pick": 1,
+                    "description": "Back 193\u00b0"
+                },
+                {
+                    "action_frames": [
+                        20,
+                        20
+                    ],
+                    "pick": 1,
+                    "description": "Left-back 280\u00b0"
+                },
+                {
+                    "action_frames": [
+                        24,
+                        24
+                    ],
+                    "pick": 1,
+                    "description": "Front-right 40\u00b0"
+                },
+                {
+                    "action_frames": [
+                        28,
+                        28
+                    ],
+                    "pick": 1,
+                    "description": "Back-right 154\u00b0"
+                },
+                {
+                    "action_frames": [
+                        32,
+                        32
+                    ],
+                    "pick": 1,
+                    "description": "Left 265\u00b0"
+                },
+                {
+                    "action_frames": [
+                        35,
+                        35
+                    ],
+                    "pick": 1,
+                    "description": "Front-left 344\u00b0"
+                },
+                {
+                    "action_frames": [
+                        40,
+                        40
+                    ],
+                    "pick": 1,
+                    "description": "Right-back 110\u00b0"
+                },
+                {
+                    "action_frames": [
+                        43,
+                        43
+                    ],
+                    "pick": 1,
+                    "description": "Back 172\u00b0"
+                },
+                {
+                    "action_frames": [
+                        45,
+                        45
+                    ],
+                    "pick": 1,
+                    "description": "Back-left 205\u00b0"
+                },
+                {
+                    "action_frames": [
+                        46,
+                        46
+                    ],
+                    "pick": 1,
+                    "description": "Left-back 222\u00b0"
+                },
+                {
+                    "action_frames": [
+                        51,
+                        51
+                    ],
+                    "pick": 1,
+                    "description": "Left-front 324\u00b0"
+                },
+                {
+                    "action_frames": [
+                        97,
+                        97
+                    ],
+                    "pick": 1,
+                    "description": "Idle stance 8\u00b0"
+                }
+            ]
+        }
+    ],
+    "total_frames": 16,
+    "grid": "4x4",
+    "resolution": "1024x1024",
+    "frame_size": "256x256"
+}

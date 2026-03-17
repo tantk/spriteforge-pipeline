@@ -2,7 +2,7 @@
     "name": "Kicking",
     "sheet_index": 7,
     "scene": "sheet_07_kicking.blend",
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter stepping forward into a spinning mid-air kick, rotating with leg fully extended at apex, then landing and recovering to stance",
+    "prompt": "Generate 4x4 sprite sheet: a fighter performing a spinning aerial kick. Frame 1: fighting stance. Frame 2: stepping forward planting foot. Frame 3: jumping off ground body rising. Frame 4: airborne body turning knees tucked. Frame 5: mid-air spinning back to camera. Frame 6: kicking leg extending in mid-air. Frame 7: full spin kick leg at maximum extension. Frame 8: leg extended horizontal in air. Frame 9: following through in air. Frame 10: body rotating past kick. Frame 11: legs coming together descending. Frame 12: approaching ground. Frame 13: landing on one foot. Frame 14: other foot touching down. Frame 15: absorbing landing bent knees. Frame 16: recovering to stance.",
     "animations": [
         {
             "name": "Kicking",

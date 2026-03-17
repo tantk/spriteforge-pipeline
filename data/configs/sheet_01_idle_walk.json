@@ -5,7 +5,7 @@
     "camera": "hybrid",
     "camera_reference_frame": 1,
     "render_note": "NLA strips must use extrapolation=NOTHING (not HOLD). With HOLD, upper tracks override lower tracks outside their frame range, freezing earlier animations. The saved .blend has this fixed.",
-    "prompt": "sprt4x4, Generate 4x4 sprite sheet: a fighter starting in idle fighting stance with fists raised, then walking forward with alternating steps, then walking backward",
+    "prompt": "Generate 4x4 sprite sheet: a fighter in idle and walking animation. Frame 1: fighting stance fists raised. Frame 2: slight weight shift. Frame 3: fists up guard position. Frame 4: weight on back foot. Frame 5: stepping forward left foot out. Frame 6: mid-stride arms swinging. Frame 7: full stride right foot forward. Frame 8: completing step cycle. Frame 9: walking forward left step. Frame 10: mid-walk arms back. Frame 11: right foot stepping. Frame 12: walk cycle completing. Frame 13: walking backward right foot back. Frame 14: stepping back weight shifting. Frame 15: left foot pulling back. Frame 16: returning to stance.",
     "animations": [
         {
             "name": "Idle",

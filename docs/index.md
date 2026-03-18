@@ -43,9 +43,13 @@ The consistency comes from the template, not the generation. The LoRA refines th
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 800px;">
   <img src="assets/lora_1.png" alt="LoRA result 1">
+  <img src="assets/lora_1.gif" alt="LoRA result 1 animated">
   <img src="assets/lora_2.png" alt="LoRA result 2">
+  <img src="assets/lora_2.gif" alt="LoRA result 2 animated">
   <img src="assets/lora_3.png" alt="LoRA result 3">
+  <img src="assets/lora_3.gif" alt="LoRA result 3 animated">
   <img src="assets/lora_4.png" alt="LoRA result 4">
+  <img src="assets/lora_4.gif" alt="LoRA result 4 animated">
 </div>
 
 *With SpriteForge LoRA: consistent character across all 16 frames*

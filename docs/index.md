@@ -112,13 +112,9 @@ The Northern Soul Spin captures the character from all angles — each frame sho
 
 Characters the model never saw during training, applied to training animations. All characters below are unseen — only the animation templates are from training data.
 
-<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
-  <img src="assets/showcase_seen_bluekarate_kicking.gif" alt="Blue karate - Kicking">
-  <img src="assets/showcase_seen_cyborg_kicking.gif" alt="Cyborg - Kicking">
-  <img src="assets/showcase_seen_boxergirl2_combo.gif" alt="Boxer girl - Combo">
-</div>
+<img src="assets/showcase_seen_9chars_kicking.gif" alt="9 unseen characters - Kicking animation" style="max-width: 800px;">
 
-*Three different unseen characters on the same training animation — consistent poses, different identities*
+*9 different unseen characters on the same training animation — consistent poses, different identities*
 
 ### 2. Unseen Animations, Unseen Characters
 

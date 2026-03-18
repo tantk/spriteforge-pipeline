@@ -98,28 +98,65 @@ The Northern Soul Spin captures the character from all angles — each frame sho
 
 ---
 
-## Generalization
+## Results
 
-The LoRA generalizes to a range of characters and animations not in the training data.
+### 1. Seen Animations, Unseen Characters
 
-### Unseen Art Styles
+Characters the model never saw during training, applied to training animations. All characters below are unseen — only the animation templates are from training data.
 
-Tested with art styles not present in training (training data was exclusively 3D-rendered VRoid characters):
-
-<img src="assets/lora_3d_unseen.png" alt="Unseen character style" style="max-width: 500px;">
-
-### Unseen Animations
-
-Template sprite sheets from animations the model never saw during training still produce consistent results:
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 600px;">
-  <img src="assets/unseen_hurricane.png" alt="Hurricane Kick (unseen)">
-  <img src="assets/unseen_breakdance.png" alt="Breakdance (unseen)">
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
+  <img src="assets/showcase_seen_bluekarate_kicking.png" alt="Blue karate - Kicking">
+  <img src="assets/showcase_seen_cyborg_kicking.png" alt="Cyborg - Kicking">
+  <img src="assets/showcase_seen_boxergirl2_combo.png" alt="Boxer girl - Combo">
 </div>
 
-<img src="assets/hurricane_kick_preview.gif" alt="Hurricane Kick GIF" style="max-width: 256px;">
+*Three different unseen characters on the same training animation — consistent poses, different identities*
 
-*Hurricane Kick — an animation not in the training data*
+### 2. Unseen Animations, Unseen Characters
+
+Both the characters AND the animations are unseen — the model generalizes to completely new inputs.
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
+  <img src="assets/showcase_unseen_blackdress_hurricane.png" alt="Black dress girl - Hurricane Kick">
+  <img src="assets/showcase_unseen_blackdress_breakdance.png" alt="Black dress girl - Breakdance">
+  <img src="assets/showcase_unseen_pinkhoodie_uprock.png" alt="Pink hoodie boy - Brooklyn Uprock">
+</div>
+
+*Unseen characters on unseen animations — the model maintains character consistency even on animation templates it was never trained on*
+
+### 3. Full Character Showcase — Boxer Girl on All Training Animations
+
+One character across all seen animations, demonstrating consistent identity across diverse fighting moves:
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
+  <img src="assets/showcase_boxer_01_idle.png" alt="Idle + Walk">
+  <img src="assets/showcase_boxer_02_run.png" alt="Run + Roll">
+  <img src="assets/showcase_boxer_05_punch.png" alt="Quad Punch">
+  <img src="assets/showcase_boxer_07_kick.png" alt="Spinning Kick">
+  <img src="assets/showcase_boxer_08_fall.png" alt="Fall + Get Up">
+  <img src="assets/showcase_boxer_09_armada.png" alt="Armada">
+  <img src="assets/showcase_boxer_10_hit.png" alt="Hit + Block">
+  <img src="assets/showcase_boxer_11_kick.png" alt="Left Right Kick">
+  <img src="assets/showcase_boxer_12_knee.png" alt="Knees to Uppercut">
+  <img src="assets/showcase_boxer_13_combo.png" alt="Punch Elbow Combo">
+</div>
+
+*Same character, 10 different fighting animations — consistent appearance across all poses*
+
+### 4. Boxer Girl on Unseen Animations
+
+The same character on animations the model never saw during training:
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
+  <img src="assets/showcase_boxer_unseen_breakdance.png" alt="Breakdance">
+  <img src="assets/showcase_boxer_unseen_uprock.png" alt="Brooklyn Uprock">
+  <img src="assets/showcase_boxer_unseen_hurricane.png" alt="Hurricane Kick">
+  <img src="assets/showcase_boxer_unseen_macaco.png" alt="Macaco Side">
+  <img src="assets/showcase_boxer_unseen_rumba.png" alt="Rumba Dancing">
+  <img src="assets/showcase_boxer_unseen_rumba_front.png" alt="Rumba Dancing Front">
+</div>
+
+*Same character on 6 unseen animations — the model preserves character identity even on completely new animation templates*
 
 ---
 

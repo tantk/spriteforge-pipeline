@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "blender": {
-      "command": "C:/Users/tanti/.local/bin/uvx.exe",
-      "args": ["blender-mcp"],
-      "env": {"BLENDER_PORT": "9871"}
-    }
-  }
-}

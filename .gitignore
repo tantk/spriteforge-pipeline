@@ -44,6 +44,15 @@ data/vrm_debug.json
 data/frame_picks.json
 find_frame_picks.py
 
+# Non-pipeline scripts (one-time tools, LoRA-specific, debug)
+scripts/retarget_export_working.py
+scripts/search_transcripts.py
+scripts/update_prompts.py
+scripts/package_training_pairs.py
+scripts/package_for_ubuntu.py
+scripts/ubuntu_export_instructions.md
+scripts/mixamo_downloader.py
+
 # OS
 Thumbs.db
 .DS_Store

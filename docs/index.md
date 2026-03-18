@@ -214,15 +214,26 @@ We believe in being transparent about what the model can and cannot do:
 
 ## Impact
 
-### Who Benefits
+### The Cost of Fighting Game Sprites
 
-**Indie game developers and solo creators** — the primary bottleneck in fighting game development is character art production. A single character needs 10+ animation sets, each with 8-16 frames. For a roster of 10 characters, that's 1000+ individual frames that must be visually consistent.
+Professional 2D fighting game sprite animation is one of the most time-intensive tasks in game development. For Capcom-scale fighting game characters (~200×200 pixels):
 
-SpriteForge doesn't replace professional pixel artists — the output quality isn't production-ready for a commercial release. But it addresses two real use cases:
+- **Key animation frames** take up to **2 hours each** to draw
+- A professional artist produces roughly **4 frames per day**
+- A single character with a full moveset (500+ frames) costs **$20,000–$30,000** — and fine-tuning for gameplay balance can **double that cost**
+- A 10-character fighting game roster requires **5,000+ hand-drawn frames**
 
-1. **Rapid prototyping.** Test character designs across all animations before commissioning expensive hand-drawn production art. A game designer can sketch a character, run it through SpriteForge, and see how it looks in every fighting animation within minutes — not weeks.
+([Source: 2D Will Never Die — How much do sprites cost?](https://2dwillneverdie.com/blog/how-much-do-sprites-cost/))
 
-2. **Placeholder assets.** Functional placeholder sprites that move and animate correctly, letting developers build and test game mechanics while final art is in production. Currently most indie devs use colored rectangles or stick figures as placeholders — SpriteForge produces significantly more useful stand-ins.
+### Rapid Prototyping
+
+SpriteForge doesn't replace professional pixel artists — the output quality isn't production-ready for a AAA release. But it dramatically accelerates the **design exploration phase**:
+
+- A game designer can sketch a character, run it through SpriteForge, and see how it looks across every fighting animation in **minutes instead of weeks**
+- Test 20 character designs in a day before commissioning expensive hand-drawn production art
+- Validate that a character's silhouette, proportions, and visual identity work across all combat poses before investing thousands in final art
+
+The cost of a wrong character design decision at the production art stage is enormous. SpriteForge moves that decision to the prototyping stage where iteration is cheap.
 
 ### Broader Significance
 

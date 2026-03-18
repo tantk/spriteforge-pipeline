@@ -41,18 +41,34 @@ The model receives:
 
 The consistency comes from the template, not the generation. The LoRA refines the base model's character swapping for the specific domain of 4×4 sprite grids — improving frame-to-frame consistency.
 
+**Input:**
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 600px; align-items: center;">
+  <img src="assets/diagram_char_ref.png" alt="Character A reference">
+  <img src="assets/diagram_template.png" alt="Sprite sheet template (Character B)">
+</div>
+
+*Left: Character A reference (army_man) — Right: Template sprite sheet (original character)*
+
+<div style="text-align: center; font-size: 2em; margin: 8px 0;">&#x2B07;</div>
+
+**Output:**
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 600px; align-items: center;">
+  <img src="assets/diagram_output.png" alt="Output sprite sheet (Character A)">
+  <img src="assets/lora_1.gif" alt="Output animated">
+</div>
+
+*Character A in the same poses as the template — consistent across all 16 frames*
+
+### More Results
+
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 800px;">
   <img src="assets/lora_1.png" alt="LoRA result 1">
   <img src="assets/lora_1.gif" alt="LoRA result 1 animated">
-  <img src="assets/lora_2.png" alt="LoRA result 2">
-  <img src="assets/lora_2.gif" alt="LoRA result 2 animated">
-  <img src="assets/lora_3.png" alt="LoRA result 3">
-  <img src="assets/lora_3.gif" alt="LoRA result 3 animated">
   <img src="assets/lora_4.png" alt="LoRA result 4">
   <img src="assets/lora_4.gif" alt="LoRA result 4 animated">
 </div>
-
-*With SpriteForge LoRA: consistent character across all 16 frames*
 
 ---
 

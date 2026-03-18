@@ -105,9 +105,9 @@ The Northern Soul Spin captures the character from all angles — each frame sho
 Characters the model never saw during training, applied to training animations. All characters below are unseen — only the animation templates are from training data.
 
 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
-  <img src="assets/showcase_seen_bluekarate_kicking.png" alt="Blue karate - Kicking">
-  <img src="assets/showcase_seen_cyborg_kicking.png" alt="Cyborg - Kicking">
-  <img src="assets/showcase_seen_boxergirl2_combo.png" alt="Boxer girl - Combo">
+  <img src="assets/showcase_seen_bluekarate_kicking.gif" alt="Blue karate - Kicking">
+  <img src="assets/showcase_seen_cyborg_kicking.gif" alt="Cyborg - Kicking">
+  <img src="assets/showcase_seen_boxergirl2_combo.gif" alt="Boxer girl - Combo">
 </div>
 
 *Three different unseen characters on the same training animation — consistent poses, different identities*
@@ -117,9 +117,9 @@ Characters the model never saw during training, applied to training animations. 
 Both the characters AND the animations are unseen — the model generalizes to completely new inputs.
 
 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
-  <img src="assets/showcase_unseen_blackdress_hurricane.png" alt="Black dress girl - Hurricane Kick">
-  <img src="assets/showcase_unseen_blackdress_breakdance.png" alt="Black dress girl - Breakdance">
-  <img src="assets/showcase_unseen_pinkhoodie_uprock.png" alt="Pink hoodie boy - Brooklyn Uprock">
+  <img src="assets/showcase_unseen_blackdress_hurricane.gif" alt="Black dress girl - Hurricane Kick">
+  <img src="assets/showcase_unseen_blackdress_breakdance.gif" alt="Black dress girl - Breakdance">
+  <img src="assets/showcase_unseen_pinkhoodie_uprock.gif" alt="Pink hoodie boy - Brooklyn Uprock">
 </div>
 
 *Unseen characters on unseen animations — the model maintains character consistency even on animation templates it was never trained on*
@@ -129,16 +129,16 @@ Both the characters AND the animations are unseen — the model generalizes to c
 One character across all seen animations, demonstrating consistent identity across diverse fighting moves:
 
 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
-  <img src="assets/showcase_boxer_01_idle.png" alt="Idle + Walk">
-  <img src="assets/showcase_boxer_02_run.png" alt="Run + Roll">
-  <img src="assets/showcase_boxer_05_punch.png" alt="Quad Punch">
-  <img src="assets/showcase_boxer_07_kick.png" alt="Spinning Kick">
-  <img src="assets/showcase_boxer_08_fall.png" alt="Fall + Get Up">
-  <img src="assets/showcase_boxer_09_armada.png" alt="Armada">
-  <img src="assets/showcase_boxer_10_hit.png" alt="Hit + Block">
-  <img src="assets/showcase_boxer_11_kick.png" alt="Left Right Kick">
-  <img src="assets/showcase_boxer_12_knee.png" alt="Knees to Uppercut">
-  <img src="assets/showcase_boxer_13_combo.png" alt="Punch Elbow Combo">
+  <img src="assets/showcase_boxer_01_idle.gif" alt="Idle + Walk">
+  <img src="assets/showcase_boxer_02_run.gif" alt="Run + Roll">
+  <img src="assets/showcase_boxer_05_punch.gif" alt="Quad Punch">
+  <img src="assets/showcase_boxer_07_kick.gif" alt="Spinning Kick">
+  <img src="assets/showcase_boxer_08_fall.gif" alt="Fall + Get Up">
+  <img src="assets/showcase_boxer_09_armada.gif" alt="Armada">
+  <img src="assets/showcase_boxer_10_hit.gif" alt="Hit + Block">
+  <img src="assets/showcase_boxer_11_kick.gif" alt="Left Right Kick">
+  <img src="assets/showcase_boxer_12_knee.gif" alt="Knees to Uppercut">
+  <img src="assets/showcase_boxer_13_combo.gif" alt="Punch Elbow Combo">
 </div>
 
 *Same character, 10 different fighting animations — consistent appearance across all poses*
@@ -148,12 +148,12 @@ One character across all seen animations, demonstrating consistent identity acro
 The same character on animations the model never saw during training:
 
 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-width: 800px;">
-  <img src="assets/showcase_boxer_unseen_breakdance.png" alt="Breakdance">
-  <img src="assets/showcase_boxer_unseen_uprock.png" alt="Brooklyn Uprock">
-  <img src="assets/showcase_boxer_unseen_hurricane.png" alt="Hurricane Kick">
-  <img src="assets/showcase_boxer_unseen_macaco.png" alt="Macaco Side">
-  <img src="assets/showcase_boxer_unseen_rumba.png" alt="Rumba Dancing">
-  <img src="assets/showcase_boxer_unseen_rumba_front.png" alt="Rumba Dancing Front">
+  <img src="assets/showcase_boxer_unseen_breakdance.gif" alt="Breakdance">
+  <img src="assets/showcase_boxer_unseen_uprock.gif" alt="Brooklyn Uprock">
+  <img src="assets/showcase_boxer_unseen_hurricane.gif" alt="Hurricane Kick">
+  <img src="assets/showcase_boxer_unseen_macaco.gif" alt="Macaco Side">
+  <img src="assets/showcase_boxer_unseen_rumba.gif" alt="Rumba Dancing">
+  <img src="assets/showcase_boxer_unseen_rumba_front.gif" alt="Rumba Dancing Front">
 </div>
 
 *Same character on 6 unseen animations — the model preserves character identity even on completely new animation templates*

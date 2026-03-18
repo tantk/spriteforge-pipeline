@@ -216,13 +216,18 @@ We believe in being transparent about what the model can and cannot do:
 
 ### The Cost of Fighting Game Sprites
 
-Professional 2D fighting game sprite animation is one of the most time-intensive tasks in game development:
+Professional 2D fighting game sprite animation is one of the most time-intensive tasks in game development.
 
-- **Key animation frames** take up to **2 hours each** to draw. A professional artist produces roughly **4 frames per day.** ([2D Will Never Die](https://2dwillneverdie.com/blog/how-much-do-sprites-cost/))
-- **King of Fighters XII:** Each character took **16-17 months** to create, with 500+ frames per character. With only 10 artists, the team could only produce 20 characters — the lowest roster in series history. ([SNK DOT Creation](https://kofaniv.snk-corp.co.jp/english/info/15th_anniv/2d_dot/creation/index.php))
-- **Skullgirls:** Holds the Guinness World Record for most frames of animation — **1,439 frames per character** across 8 fighters (11,515 total). All hand-drawn in Photoshop. ([Skullgirls Wiki](https://skullgirls.fandom.com/wiki/Digital_Art_Compendium))
-- **A single character** with a full moveset costs **$20,000–$30,000** — and fine-tuning for gameplay balance can **double that cost**. ([2D Will Never Die](https://2dwillneverdie.com/blog/how-much-do-sprites-cost/))
-- A 10-character fighting game roster requires **5,000+ hand-drawn frames**
+For sprites at our scale (~200-256px), [2D Will Never Die](https://2dwillneverdie.com/blog/how-much-do-sprites-cost/) reports:
+
+- **Key animation frames** take up to **2 hours each** to draw
+- A professional artist produces roughly **4 frames per day**
+- A single character with a full moveset (500+ frames) costs **$20,000–$30,000** — and fine-tuning for gameplay balance can **double that cost**
+
+At the high end, HD fighting games require even more:
+
+- **King of Fighters XII** (HD sprites): Each character took **16-17 months** with 500+ frames. Only 10 artists on the team, limiting the roster to 20 characters — the lowest in series history. ([SNK DOT Creation](https://kofaniv.snk-corp.co.jp/english/info/15th_anniv/2d_dot/creation/index.php))
+- **Skullgirls** (HD hand-drawn): Guinness World Record for most frames — **1,439 frames per character**, all drawn in Photoshop. ([Skullgirls Wiki](https://skullgirls.fandom.com/wiki/Digital_Art_Compendium))
 
 ### Rapid Prototyping
 

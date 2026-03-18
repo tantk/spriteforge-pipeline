@@ -291,7 +291,7 @@ The spin animation training data includes per-frame orientation angles in the pr
 ## Links
 
 - **Model:** [SpriteForge on ModelScope](https://modelscope.ai/models/tantk7/spriteforgev3)
-- **Resources:** [Character references + sprite sheet templates on itch.io](#)
+- **Resources:** [Character references + sprite sheet templates on itch.io](https://tantk.itch.io/spritesheet)
 - **Competition:** [Qwen-Image LoRA Training Competition](https://modelscope.ai/active/qwenimagelora)
 
 ---

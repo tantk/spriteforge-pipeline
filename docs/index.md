@@ -198,6 +198,38 @@ The approach avoids the multi-frame consistency problem entirely by separating *
 
 ---
 
+## Limitations
+
+We believe in being transparent about what the model can and cannot do:
+
+- **Unseen animations with unusual poses may produce artifacts.** The model works reliably on animations similar to the training data (fighting moves, dance, standard locomotion). However, animations with extreme poses — such as ground rolls, inverted positions, or poses that differ significantly from the character reference — can result in unnatural character positioning. The model relies on the reference image to understand the character's appearance; poses that show body parts from angles not visible in the reference require hallucination.
+
+- **Single reference image limitation.** The model receives only one character reference (an idle fighting stance). It must infer the character's appearance from all other angles based on this single view. Characters with asymmetric designs (e.g., different patterns on left vs right side) may not be fully captured.
+
+- **Template dependent.** Output quality depends on template quality. If the template sprite sheet has artifacts or inconsistencies, the output inherits them.
+
+- **Compute requirements.** Qwen-Image-Edit-2511 requires ~40GB VRAM for local inference. Free inference is available on ModelScope, but self-hosting at scale requires significant GPU resources.
+
+---
+
+## Impact
+
+### Who Benefits
+
+**Indie game developers and solo creators** — the primary bottleneck in fighting game development is character art production. A single character needs 10+ animation sets, each with 8-16 frames. For a roster of 10 characters, that's 1000+ individual frames that must be visually consistent.
+
+SpriteForge doesn't replace professional pixel artists — the output quality isn't production-ready for a commercial release. But it addresses two real use cases:
+
+1. **Rapid prototyping.** Test character designs across all animations before commissioning expensive hand-drawn production art. A game designer can sketch a character, run it through SpriteForge, and see how it looks in every fighting animation within minutes — not weeks.
+
+2. **Placeholder assets.** Functional placeholder sprites that move and animate correctly, letting developers build and test game mechanics while final art is in production. Currently most indie devs use colored rectangles or stick figures as placeholders — SpriteForge produces significantly more useful stand-ins.
+
+### Broader Significance
+
+The template-based character swap approach demonstrates a pattern for using image editing models in structured content creation. Rather than asking generative AI to learn complex spatial layouts, we provide the structure as input and let the model do what it's good at — transferring visual identity. This principle applies beyond sprite sheets to any domain where consistent multi-frame or multi-view output is needed.
+
+---
+
 ## Future Work
 
 The spin animation training data includes per-frame orientation angles in the prompts. A natural extension is training with cross-angle pairs — where the template and output show different camera angles — enabling prompt-controlled character rotation. This would allow users to specify viewing angles per frame, moving toward 3D-aware sprite generation from 2D inputs.

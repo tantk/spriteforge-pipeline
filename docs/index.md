@@ -174,6 +174,10 @@ This is a proof of concept — templates can come from any source that produces 
 - **Platform:** ModelScope Civision
 - **Note:** Inference requires ~40GB VRAM. Free inference is available on ModelScope.
 
+### Training Parameters
+
+<img src="assets/parameters.png" alt="Training parameters" style="max-width: 300px;">
+
 ### Training Loss
 
 <img src="assets/loss.png" alt="Training loss curve" style="max-width: 600px;">

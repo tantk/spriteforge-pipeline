@@ -168,7 +168,7 @@ This is a proof of concept — templates can come from any source that produces 
 - **Prompt:** "Replace the character in the sprite sheet with the character from the reference image"
 - **Epochs:** 10
 - **Repeat:** 5
-- **Checkpoint used:** 10 (final)
+- **Checkpoint used:** 10
 - **Trigger word:** None
 - **All other parameters:** Default (ModelScope Civision)
 - **Platform:** ModelScope Civision
@@ -178,7 +178,7 @@ This is a proof of concept — templates can come from any source that produces 
 
 <img src="assets/loss.png" alt="Training loss curve" style="max-width: 600px;">
 
-Loss is still decreasing at epoch 10 with no sign of plateau — the model could benefit from additional training rounds. We selected checkpoint 10 as it produced the best visual quality during inference testing.
+Loss is still decreasing at epoch 10 with no sign of plateau — the model could benefit from additional training epochs.
 
 ---
 

@@ -194,3 +194,5 @@ The spin animation training data includes per-frame orientation angles in the pr
 ---
 
 *Built with Blender 5.0, VRoid Studio, Mixamo, and Claude Code.*
+
+[Read the full development blog →](blog)

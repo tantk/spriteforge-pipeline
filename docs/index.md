@@ -166,8 +166,19 @@ This is a proof of concept — templates can come from any source that produces 
 - **Base model:** Qwen-Image-Edit-2511
 - **Training pairs:** 100 (multi-image: reference + template → output)
 - **Prompt:** "Replace the character in the sprite sheet with the character from the reference image"
+- **Epochs:** 10
+- **Repeat:** 5
+- **Checkpoint used:** 10 (final)
+- **Trigger word:** None
+- **All other parameters:** Default (ModelScope Civision)
 - **Platform:** ModelScope Civision
 - **Note:** Inference requires ~40GB VRAM. Free inference is available on ModelScope.
+
+### Training Loss
+
+<img src="assets/loss.png" alt="Training loss curve" style="max-width: 600px;">
+
+Loss is still decreasing at epoch 10 with no sign of plateau — the model could benefit from additional training rounds. We selected checkpoint 10 as it produced the best visual quality during inference testing.
 
 ---
 

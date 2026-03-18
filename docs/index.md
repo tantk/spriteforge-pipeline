@@ -56,7 +56,7 @@ The consistency comes from the template, not the generation. The LoRA refines th
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 600px; align-items: center;">
   <img src="assets/diagram_output.png" alt="Output sprite sheet (Character A)">
-  <img src="assets/lora_1.gif" alt="Output animated">
+  <img src="assets/diagram_output.gif" alt="Output animated">
 </div>
 
 *Character A in the same poses as the template — consistent across all 16 frames*

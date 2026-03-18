@@ -1,8 +1,0 @@
-[
-    {
-        "image": ["image_3.png"],
-        "layer_num": 0,
-        "layer_input_image": "image.png",
-        "prompt": "Text 'HELLO' and 'Have a great day'"
-    }
-]

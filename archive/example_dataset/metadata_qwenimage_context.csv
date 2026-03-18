@@ -1,2 +1,0 @@
-image,prompt,context_image
-canny/image_2.jpg,"Context_Control. a dog",canny/image_1.jpg

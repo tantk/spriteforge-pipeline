@@ -1,2 +1,0 @@
-image,prompt,controlnet_image,controlnet_processor_id
-canny/image_2.jpg,"a dog",canny/image_1.jpg,canny

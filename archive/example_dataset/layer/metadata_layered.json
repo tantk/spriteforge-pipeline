@@ -1,8 +1,0 @@
-[
-    {
-        "image": ["image.png", "image_1.png", "image_2.png", "image_3.png"],
-        "layer_num": 3,
-        "layer_input_image": "image.png",
-        "prompt": "a poster"
-    }
-]

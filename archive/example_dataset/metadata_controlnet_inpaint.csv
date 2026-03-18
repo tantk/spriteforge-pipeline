@@ -1,2 +1,0 @@
-image,prompt,controlnet_image,controlnet_inpaint_mask
-inpaint/image_2.jpg,"a cat with sunglasses",inpaint/image_1.jpg,inpaint/mask.jpg

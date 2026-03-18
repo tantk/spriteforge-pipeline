@@ -1,2 +1,0 @@
-image,prompt,blockwise_controlnet_image,controlnet_processor_id
-depth/image_2.jpg,"水下少女",depth/image_1.jpg,depth

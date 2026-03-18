@@ -1,41 +1,56 @@
 # Secrets
 .env
+mixamo_token.txt
 
-# Node
-node_modules/
-
-# Large binary assets (not suitable for git)
+# Large binary assets
 *.blend
 *.blend1
 data/animations/
 data/characters/
 data/scenes/
+data/renders/
+data/renders_final/
+data/reproduce/
+data/reproduce_2/
+data/reproduce_3/
+data/unseen_frames/
+data/civision_upload.zip
+ubuntu_export_package.zip
 
-# Render frames (individual PNGs in subdirs) — sprite sheets and GIFs are kept
-data/renders/sheet_*/
+# Archive (deprecated scripts/data)
+archive/
 
-# Test output (test renders, debug images)
+# Test output
 tests/output/
-
-# Test/debug renders
-data/renders/test/
-
-# Test/debug renders (legacy location)
-data/renders/test_*.png
-data/renders/compare_*.png
-data/renders/expression_*.png
-data/renders/face_*.png
-data/renders/face2_*.png
-data/renders/lighting_*.png
 
 # Python
 __pycache__/
 *.pyc
 
-# Claude Code local settings
-.claude/settings.local.json
+# Claude Code
+.claude/
 .blender_port
+.mcp.json
+
+# Node
+node_modules/
+.playwright-mcp/
+
+# Debug data
+data/fbx_debug*.json
+data/fbx_fix_check.json
+data/fbx_rootmotion_compare.json
+data/vrm_debug.json
+data/frame_picks.json
+find_frame_picks.py
 
 # OS
 Thumbs.db
 .DS_Store
+
+# Blender MCP addon (not our code)
+blender_mcp_addon.py
+blender_sprite_pipeline_addon.py
+
+# Post assets (social media)
+post/

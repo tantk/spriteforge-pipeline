@@ -162,6 +162,8 @@ The same character on animations the model never saw during training:
 
 *Same character on 6 unseen animations — the model preserves character identity even on completely new animation templates*
 
+Note: the character size varies between animations. This is not a generation inconsistency — the model follows the character size in the sprite sheet template used during inference. Different unseen animations were rendered with different template characters at different scales, so the output inherits those size differences.
+
 ---
 
 ## What Worked and What Didn't
@@ -267,7 +269,7 @@ And here's what the model produces when swapping in a new character:
 
 - **Single reference image limitation.** The model receives only one character reference (an idle fighting stance). It must infer the character's appearance from all other angles based on this single view. Characters with asymmetric designs (e.g., different patterns on left vs right side) may not be fully captured.
 
-- **Template dependent.** Output quality depends on template quality. If the template sprite sheet has artifacts or inconsistencies, the output inherits them. Character size in the output follows the sprite sheet template used during inference — if the template character is large, the output character will be large, regardless of the reference image's proportions.
+- **Template dependent.** Output quality depends on template quality. If the template sprite sheet has artifacts or inconsistencies, the output inherits them.
 
 - **Compute requirements.** Qwen-Image-Edit-2511 requires ~40GB VRAM for local inference. Free inference is available on ModelScope, but self-hosting at scale requires significant GPU resources.
 

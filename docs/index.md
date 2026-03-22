@@ -245,6 +245,26 @@ We believe in being transparent about what the model can and cannot do:
 
 - **Unseen animations with unusual poses may produce artifacts.** The model works reliably on animations similar to the training data (fighting moves, dance, standard locomotion). However, animations with extreme poses — such as ground rolls, inverted positions, or poses that differ significantly from the character reference — can result in unnatural character positioning. The model relies on the reference image to understand the character's appearance; poses that show body parts from angles not visible in the reference require hallucination.
 
+**Example: Macaco Side (unseen animation with extreme poses)**
+
+The Macaco Side is a capoeira acrobatic move involving handstands and flips — poses far outside the training data. Here's the original 3D-rendered template:
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 600px;">
+  <img src="assets/failure_macaco_template.png" alt="Macaco Side - original template sprite sheet">
+  <img src="assets/failure_macaco_template.gif" alt="Macaco Side - original template animated">
+</div>
+
+*Original template: 3D-rendered Macaco Side animation*
+
+And here's what the model produces when swapping in a new character:
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 600px;">
+  <img src="assets/failure_macaco_boxergirl.png" alt="Macaco Side - generated boxergirl output">
+  <img src="assets/failure_macaco_boxergirl.gif" alt="Macaco Side - generated boxergirl animated">
+</div>
+
+*Generated output: the inverted frames (handstands, flips) show distorted body proportions and unnatural limb positioning. The model struggles to reconstruct the character from angles it has never seen in the reference image.*
+
 - **Single reference image limitation.** The model receives only one character reference (an idle fighting stance). It must infer the character's appearance from all other angles based on this single view. Characters with asymmetric designs (e.g., different patterns on left vs right side) may not be fully captured.
 
 - **Template dependent.** Output quality depends on template quality. If the template sprite sheet has artifacts or inconsistencies, the output inherits them.

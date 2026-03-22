@@ -155,12 +155,11 @@ The same character on animations the model never saw during training:
   <img src="assets/showcase_boxer_unseen_breakdance.gif" alt="Breakdance">
   <img src="assets/showcase_boxer_unseen_uprock.gif" alt="Brooklyn Uprock">
   <img src="assets/showcase_boxer_unseen_hurricane.gif" alt="Hurricane Kick">
-  <img src="assets/showcase_boxer_unseen_macaco.gif" alt="Macaco Side">
   <img src="assets/showcase_boxer_unseen_rumba.gif" alt="Rumba Dancing">
   <img src="assets/showcase_boxer_unseen_rumba_front.gif" alt="Rumba Dancing Front">
 </div>
 
-*Same character on 6 unseen animations — the model preserves character identity even on completely new animation templates*
+*Same character on 5 unseen animations — the model preserves character identity even on completely new animation templates*
 
 ---
 
